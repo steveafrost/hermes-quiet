@@ -8,7 +8,7 @@ const cssWithoutComments = CSS.replace(/\/\*[\s\S]*?\*\//g, '')
 
 test('the optional Codex palette remains bundled in light and dark', () => {
   assert.equal(CODEX_THEME.name, 'codex-chat')
-  assert.equal(CODEX_THEME.label, 'Codex Skin')
+  assert.equal(CODEX_THEME.label, 'Codex Skin · Catppuccin')
   assert.ok(CODEX_THEME.colors.background)
   assert.ok(CODEX_THEME.darkColors.background)
 })

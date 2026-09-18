@@ -83,11 +83,11 @@ document.title=btoa(JSON.stringify({active,wrapped,glass,light,disabled}));
     assert.equal(a.zoom,1);assert.equal(a.removeClicks,1)
     assert.ok(result.wrapped.last.top>result.wrapped.first.top)
     assert.equal(result.wrapped.last.right,result.wrapped.row.right)
-    assert.deepEqual(a.colors,{chat:'rgb(17, 17, 17)',sidebar:'rgb(28, 28, 28)',selected:'color(srgb 0.988235 0.988235 0.988235 / 0.07)',composer:'rgb(33, 33, 33)',bubble:'rgb(29, 29, 29)',panel:'rgb(36, 36, 36)',text:'rgb(252, 252, 252)'})
+    assert.deepEqual(a.colors,{chat:'rgb(17, 17, 27)',sidebar:'rgb(24, 24, 37)',selected:'color(srgb 0.803922 0.839216 0.956863 / 0.07)',composer:'rgb(30, 30, 46)',bubble:'rgb(30, 30, 46)',panel:'rgb(30, 30, 46)',text:'rgb(205, 214, 244)'})
     assert.equal(result.glass.sidebar,'rgba(0, 0, 0, 0)')
     assert.equal(result.glass.chatToken,'transparent')
     assert.equal(result.light.composer,'rgb(255, 255, 255)')
-    assert.equal(result.light.bubble,'rgb(243, 243, 243)')
+    assert.equal(result.light.bubble,'rgb(220, 224, 232)')
     assert.ok(result.disabled.photo.height<122);assert.equal(result.disabled.order,'0')
   } finally { await rm(temp,{recursive:true,force:true}) }
 })

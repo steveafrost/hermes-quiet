@@ -23,59 +23,59 @@ const HERMES_FONT = SYSTEM_FONT
 
 const CODEX_THEME = {
   name: 'codex-chat',
-  label: 'Codex Skin',
-  description: 'Codex-inspired light and dark palettes with system typography',
+  label: 'Codex Skin · Catppuccin',
+  description: 'Codex-inspired layout with the Catppuccin palette — Latte in light, Mocha in dark, peach accent',
   colors: {
-    background: '#FFFFFF',
-    foreground: '#0D0D0D',
-    card: '#FFFFFF',
-    cardForeground: '#0D0D0D',
-    muted: '#F3F3F3',
-    mutedForeground: '#737373',
-    popover: '#FFFFFF',
-    popoverForeground: '#0D0D0D',
-    primary: '#0D0D0D',
-    primaryForeground: '#FFFFFF',
-    secondary: '#F3F3F3',
-    secondaryForeground: '#0D0D0D',
-    accent: '#ECECEC',
-    accentForeground: '#0D0D0D',
-    border: '#E5E5E5',
-    input: '#E5E5E5',
-    ring: '#0D0D0D',
-    composerRing: '#D9D9D9',
-    destructive: '#D00E17',
-    destructiveForeground: '#FFFFFF',
-    sidebarBackground: '#FCFCFC',
-    sidebarBorder: '#E5E5E5',
-    userBubble: '#F3F3F3',
-    userBubbleBorder: '#F3F3F3'
+    background: '#eff1f5',
+    foreground: '#4c4f69',
+    card: '#ffffff',
+    cardForeground: '#4c4f69',
+    muted: '#dce0e8',
+    mutedForeground: '#5c5f77',
+    popover: '#ffffff',
+    popoverForeground: '#4c4f69',
+    primary: '#fe640b',
+    primaryForeground: '#11111b',
+    secondary: '#dce0e8',
+    secondaryForeground: '#4c4f69',
+    accent: '#ccd0da',
+    accentForeground: '#4c4f69',
+    border: '#ccd0da',
+    input: '#ccd0da',
+    ring: '#fe640b',
+    composerRing: '#bcc0cc',
+    destructive: '#d20f39',
+    destructiveForeground: '#ffffff',
+    sidebarBackground: '#e6e9ef',
+    sidebarBorder: '#ccd0da',
+    userBubble: '#dce0e8',
+    userBubbleBorder: '#ccd0da'
   },
   darkColors: {
-    background: '#111111',
-    foreground: '#FCFCFC',
-    card: '#212121',
-    cardForeground: '#FCFCFC',
-    muted: '#242424',
-    mutedForeground: '#B4B4B4',
-    popover: '#242424',
-    popoverForeground: '#FCFCFC',
-    primary: '#FCFCFC',
-    primaryForeground: '#111111',
-    secondary: '#242424',
-    secondaryForeground: '#FCFCFC',
-    accent: '#2C2C2C',
-    accentForeground: '#FCFCFC',
-    border: '#2E2E2E',
-    input: '#2E2E2E',
-    ring: '#FCFCFC',
-    composerRing: '#2E2E2E',
-    destructive: '#EF4444',
-    destructiveForeground: '#FFFFFF',
-    sidebarBackground: '#1C1C1C',
-    sidebarBorder: '#242424',
-    userBubble: '#1D1D1D',
-    userBubbleBorder: '#1D1D1D'
+    background: '#11111b',
+    foreground: '#cdd6f4',
+    card: '#1e1e2e',
+    cardForeground: '#cdd6f4',
+    muted: '#313244',
+    mutedForeground: '#a6adc8',
+    popover: '#1e1e2e',
+    popoverForeground: '#cdd6f4',
+    primary: '#fab387',
+    primaryForeground: '#11111b',
+    secondary: '#313244',
+    secondaryForeground: '#cdd6f4',
+    accent: '#45475a',
+    accentForeground: '#cdd6f4',
+    border: '#313244',
+    input: '#313244',
+    ring: '#fab387',
+    composerRing: '#45475a',
+    destructive: '#f38ba8',
+    destructiveForeground: '#11111b',
+    sidebarBackground: '#181825',
+    sidebarBorder: '#313244',
+    userBubble: '#1e1e2e',
+    userBubbleBorder: '#313244'
   },
   typography: {
     fontSans: SYSTEM_FONT,
@@ -90,11 +90,11 @@ const SEND_MASK = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/
 const BROWSER_PALETTE_CSS = `
 html[data-codex-chat-look='true'][data-hermes-theme='codex-chat'][data-hermes-mode='dark'] {
   --codex-browser-background: var(--codex-color-chat);
-  --codex-browser-tab: #1d1d1d;
+  --codex-browser-tab: #1e1e2e;
   --codex-browser-address: transparent;
   --codex-browser-border: transparent;
-  --codex-browser-divider: #232323;
-  --codex-sidebar-divider: #2c2c2c;
+  --codex-browser-divider: #313244;
+  --codex-sidebar-divider: #313244;
 }
 `
 

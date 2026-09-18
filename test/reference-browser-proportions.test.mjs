@@ -18,7 +18,7 @@ test('reference browser proportions and half-width dividers preserve native grab
  assert.equal(r.header,48);assert.equal(r.tab,28);assert.equal(r.above,10);assert.equal(r.below,10);assert.equal(r.toolbar,39)
  assert.deepEqual(r.centers,[22,51,80]);assert.equal(r.address,'rgba(0, 0, 0, 0)');assert.equal(r.border,'rgba(0, 0, 0, 0)')
  assert.equal(r.dpr,2)
- assert.deepEqual(r.lines,[{width:'1px',rendered:.25,physical:.5,color:'rgb(44, 44, 44)',opacity:'1',grab:8,cursor:'col-resize'},{width:'1px',rendered:.5,physical:1,color:'rgb(35, 35, 35)',opacity:'1',grab:8,cursor:'col-resize'}])
+ assert.deepEqual(r.lines,[{width:'1px',rendered:.25,physical:.5,color:'rgb(49, 50, 68)',opacity:'1',grab:8,cursor:'col-resize'},{width:'1px',rendered:.5,physical:1,color:'rgb(49, 50, 68)',opacity:'1',grab:8,cursor:'col-resize'}])
  await b.call('Emulation.setDeviceMetricsOverride',{width:1600,height:900,deviceScaleFactor:1,mobile:false})
  const dprOne=await b.evaluate(`(()=>({dpr:devicePixelRatio,lines:['left-sash','right-sash'].map(id=>{const el=document.getElementById(id),r=el.firstElementChild.getBoundingClientRect();return{rendered:r.width,physical:r.width*devicePixelRatio,grab:el.getBoundingClientRect().width}})}))()`)
  assert.deepEqual(dprOne,{dpr:1,lines:[{rendered:.25,physical:.25,grab:8},{rendered:.5,physical:.5,grab:8}]})

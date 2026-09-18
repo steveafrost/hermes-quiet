@@ -62,15 +62,17 @@ ${CSS}\n${BROWSER_PALETTE_CSS}
     assert.equal(empty.weight, '400')
     assert.equal(empty.editMax, '192px')
     assert.equal(await evaluate("getComputedStyle(document.getElementById('editor')).paddingTop"),'2px')
-    assert.equal(empty.textColor, 'rgb(252, 252, 252)')
-    assert.equal(empty.plusColor, 'rgb(252, 252, 252)')
+    assert.equal(empty.textColor, 'rgb(205, 214, 244)')
+    assert.equal(empty.plusColor, 'rgb(250, 179, 135)')  // theme primary (peach): the plus action carries the accent
     assert.equal(await evaluate("getComputedStyle(document.getElementById('outer-fade')).backgroundImage"), 'none')
     const placeholderPixel = await evaluate(`(() => {
       const canvas=document.createElement('canvas');canvas.width=canvas.height=1;const ctx=canvas.getContext('2d');
       ctx.fillStyle=getComputedStyle(document.getElementById('surface')).backgroundColor;ctx.fillRect(0,0,1,1);
       ctx.fillStyle=getComputedStyle(document.getElementById('editor'),'::before').color;ctx.fillRect(0,0,1,1);return [...ctx.getImageData(0,0,1,1).data];
     })()`)
-    assert.deepEqual(placeholderPixel,[86,86,86,255])
+    // Flatten of the theme's 24%-foreground placeholder over --theme-card-seed.
+    // Catppuccin Mocha: 0.24*#cdd6f4 over 0.76*#1e1e2e.
+    assert.deepEqual(placeholderPixel,[72,74,94,255])
     if (process.env.CODEX_SKIN_ARTIFACT_DIR) {
       await mkdir(process.env.CODEX_SKIN_ARTIFACT_DIR,{recursive:true})
       const {data}=await call('Page.captureScreenshot',{format:'png'},sessionId)
