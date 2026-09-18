@@ -4,6 +4,10 @@ All notable changes to this project are documented here.
 
 ## [Unreleased]
 
+### Added
+
+- **Titlebar icons** setting: the top bar keeps no tools — every native glyph (sidebar toggle, layout editor, HUD, pane-flip, right sidebar and settings) is hidden, since each is reachable from **⌘K**. Switch it back to **All** from the command palette.
+
 ### Fixed
 
 - Leave model labels entirely to Hermes, preserving its original names, capitalization and Fast indicator. Removed the skin's name rewriting and appended reasoning label; Hermes' native Thinking Level control is unchanged.

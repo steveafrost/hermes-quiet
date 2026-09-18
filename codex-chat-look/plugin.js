@@ -4,7 +4,7 @@ import { jsx } from 'react/jsx-runtime'
 
 const ID = 'codex-chat-look'
 const STYLE_ID = `${ID}-styles`
-const BUILD_ID = 'v1.7.0'
+const BUILD_ID = 'v1.9.0'
 const STORAGE_PREFIX = `${ID}:turn:`
 const LONG_USER_STATE_SUFFIX = ':long-user-expanded'
 const MAX_PERSISTED_LONG_USER_STATES = 250
@@ -12,6 +12,7 @@ const RUNTIME_HANDOFF_KEY = '__hermesCodexChatLookRuntimeHandoff'
 const COMPOSER_WIDTH_STORAGE_KEY = 'composer-width'
 const PINNED_USER_MESSAGES_STORAGE_KEY = 'pinned-user-messages'
 const CLEAN_TRANSCRIPT_STORAGE_KEY = 'clean-transcript'
+const TITLEBAR_ICONS_STORAGE_KEY = 'titlebar-icons'
 const CLEAN_TRANSCRIPT_EVENT = `${ID}:clean-transcript`
 
 const PLAYBACK_CLOSE_GRACE_MS = 250
@@ -2127,6 +2128,16 @@ html[data-codex-chat-look='true'] [data-tree-split]
   opacity: 0 !important;
 }
 
+/* Codex Skin: the top bar carries no tools at all. Every native titlebar glyph
+   — sidebar toggle, layout editor, HUD, pane-flip, right sidebar and settings —
+   is hidden; each stays reachable through its ⌘K command and its keybind.
+   Scoped to the "hidden" mode of the titlebar-icons option so ⌘K can restore
+   them. Direct-child "> button" only, so contributions slotted into the
+   clusters stay untouched. */
+html[data-codex-chat-look='true'][data-codex-titlebar-icons='hidden'] [data-titlebar-cluster] > button {
+  display: none !important;
+}
+
 `
 
 function safeGet(key) {
@@ -2493,6 +2504,27 @@ function setCleanTranscriptMode(mode) {
   pluginStorage?.set(CLEAN_TRANSCRIPT_STORAGE_KEY, normalized)
   syncCleanTranscriptRoot()
   window.dispatchEvent(new window.Event(CLEAN_TRANSCRIPT_EVENT))
+}
+
+function readTitlebarIconsMode() {
+  try {
+    const mode = pluginStorage?.get(TITLEBAR_ICONS_STORAGE_KEY, 'hidden')
+    return mode === 'all' ? 'all' : 'hidden'
+  } catch {
+    return 'hidden'
+  }
+}
+
+function syncTitlebarIconsRoot() {
+  const mode = readTitlebarIconsMode()
+  document.documentElement.setAttribute('data-codex-titlebar-icons', mode)
+  return mode
+}
+
+function setTitlebarIconsMode(mode) {
+  const normalized = mode === 'all' ? 'all' : 'hidden'
+  pluginStorage?.set(TITLEBAR_ICONS_STORAGE_KEY, normalized)
+  syncTitlebarIconsRoot()
 }
 
 function clearCleanTranscriptDecorations(scope = document) {
@@ -3601,12 +3633,14 @@ function CodexChatStyleRuntime() {
     syncComposerWidthRoot()
     syncPinnedUserMessagesRoot()
     syncCleanTranscriptRoot()
+    syncTitlebarIconsRoot()
     const uninstallBehavior = installBehaviorRuntime(() => {
       style?.remove()
       delete root.dataset.codexChatLook
       root.removeAttribute('data-codex-composer-width')
       root.removeAttribute('data-codex-pinned-user-messages')
       root.removeAttribute('data-codex-clean-transcript')
+      root.removeAttribute('data-codex-titlebar-icons')
       if (root.dataset.codexChatLookBuild === BUILD_ID) delete root.dataset.codexChatLookBuild
       if (root.dataset.codexChatLookRuntime === BUILD_ID) delete root.dataset.codexChatLookRuntime
     })
@@ -3667,6 +3701,19 @@ export default {
         keepOpen: true,
         keywords: ['codex', 'skin', 'clean', 'transcript', 'tool', 'calls', 'interim', 'messages'],
         run: () => setCleanTranscriptMode(readCleanTranscriptMode() === 'on' ? 'off' : 'on')
+      }
+    })
+    ctx.register({
+      id: 'toggle-titlebar-icons',
+      area: PALETTE_AREA,
+      data: {
+        id: 'codex-chat-look.toggle-titlebar-icons',
+        label: 'Codex Skin: Titlebar icons',
+        detail: () => (readTitlebarIconsMode() === 'hidden' ? 'Hidden' : 'All'),
+        detailVariant: 'state',
+        keepOpen: true,
+        keywords: ['codex', 'skin', 'titlebar', 'icons', 'top', 'bar', 'settings', 'show', 'hide', 'sidebar', 'layout'],
+        run: () => setTitlebarIconsMode(readTitlebarIconsMode() === 'hidden' ? 'all' : 'hidden')
       }
     })
     ctx.register({
