@@ -13,10 +13,10 @@ test('the optional Codex palette remains bundled in light and dark', () => {
   assert.ok(CODEX_THEME.darkColors.background)
 })
 
-test('the skin fixes typography independently from the selected Hermes theme', () => {
-  assert.match(CSS, /--dt-font-sans:\s*[^;]+!important;/)
-  assert.match(CSS, /--font-sans:\s*[^;]+!important;/)
-  assert.ok(CSS.includes(`font-family: ${SYSTEM_FONT} !important`))
+test('the skin preserves its typography fallback without overriding Hermes configured font', () => {
+  assert.doesNotMatch(cssWithoutComments, /--dt-font-sans:\s*[^;]+!important;/)
+  assert.match(CSS, /--font-sans:\s*var\(--dt-font-sans,[^;]+!important;/)
+  assert.ok(CSS.includes(`font-family: var(--dt-font-sans, ${SYSTEM_FONT}) !important`))
 })
 
 test('layout CSS consumes theme variables instead of embedding a palette', () => {

@@ -2,7 +2,53 @@
 
 All notable changes to this project are documented here.
 
-## [Unreleased]
+## [1.9.1-local] - 2026-10-01
+
+### Compatibility
+
+- Merge upstream v1.8.2 status-drawer, header-band, composer-control, navigation-lifetime, and image-preview fixes.
+- Preserve the local Catppuccin Latte/Mocha peach palette and persisted titlebar-icons toggle; move its activation and cleanup into the plugin-owned stylesheet runtime.
+- Honor Hermes' config-backed chat-font CSS token, retaining the system stack as a fallback rather than forcing it over the user's setting.
+- Disable upstream binary replacement for this local palette variant, including cached update offers, so the custom theme and titlebar option cannot be silently overwritten.
+
+## [1.8.2] - 2026-09-29
+
+
+### Fixed
+
+- Restore the themed Tasks and Queue card after Hermes added collapsible status drawers, while preserving native drawer controls, task scrolling and split-chat isolation.
+- Keep the top control band at a constant height when showing or hiding tabs and the browser pane, without shifting the native window controls.
+- Make the main chat header genuinely transparent when its tabs are hidden, letting the conversation scroll behind it instead of clipping below an empty row.
+- Keep cramped tab strips in the same band, preserving native control reservations, horizontal tab scrolling and the window drag area.
+
+## [1.8.1] - 2026-09-18
+
+### Added
+
+- GitHub-hosted images in release-history previews, supporting Markdown and HTML image syntax without executing release HTML or event handlers. Images load on opening the menu and stay within its bounds.
+
+### Fixed
+
+- Center left and right window controls against their actual extended tab bands, including after pane rearrangement or resizing. Preserve native placement when controls and tabs use separate rows.
+- Align chat, sidebar and preview tab bands vertically with equal top/bottom spacing, keeping the existing preview tab size and native vertical-tab behavior.
+- Keep the hover menu above the composer as images finish loading; show readable descriptions when an image cannot load instead of raw image markup.
+- Keep the skin active when opening Capabilities, Messaging, Artifacts or Settings and returning to chat. Styles now follow plugin lifetime rather than a titlebar slot, preserving native controls on extension pages.
+- Keep update detection working after navigation and view remounts. Stop its controller only when the plugin is disabled or unloaded.
+
+### Improved
+
+- Match the composer's plus icon to the native send/stop button color instead of the theme accent, preserving its shape and menu behavior.
+- Give session-control error notices a rounded, theme-aware Codex card with readable wrapping on narrow panes. Preserve their native error icon, alert semantics and dismiss action.
+- Update plugin-management instructions to Capabilities → Plugins.
+
+## [1.8.0] - 2026-09-18
+
+### Added
+
+- In-app update notifications beside the composer's plus button, with hourly stable-release checks and stale refresh on app focus/reconnection.
+- Scrollable release notes fetched directly from GitHub, including older releases on demand.
+- One-click verified download and local plugin replacement, hot-reload confirmation, and a green success animation that disappears when complete. Skin settings are retained.
+- Plugin manifest and desktop bundle for Hermes' plugin catalog, preserving the standalone manual-install path.
 
 ### Added
 
@@ -11,10 +57,18 @@ All notable changes to this project are documented here.
 ### Fixed
 
 - Leave model labels entirely to Hermes, preserving its original names, capitalization and Fast indicator. Removed the skin's name rewriting and appended reasoning label; Hermes' native Thinking Level control is unchanged.
+- Give tab close controls a circular background, balanced insets and a separate title area.
+- Center queued-message edit/send actions across the complete row, including attachment and editing metadata, without changing Queue behavior.
 
 ### Improved
 
 - Refined sidebar contrast: clearer conversation names, quieter section headings and navigation icons, and subtler neutral hover/selection fills. Layout, typography and native status colors are unchanged.
+- Redraw the composer's plus icon with symmetric, unrotated strokes while retaining its original button and action.
+
+### Maintenance
+
+- Document GitHub update requests, local update state and the initial manual update needed to install the updater.
+- Add regression coverage for update integrity, local replacement/recovery, activation receipts, hover behavior and composer control alignment.
 
 ## [1.7.0] - 2026-09-17
 

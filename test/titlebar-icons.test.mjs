@@ -39,6 +39,7 @@ async function pluginFixture(initialStorage = {}) {
       get: (key, fallback) => values.has(key) ? values.get(key) : fallback,
       set: (key, value) => values.set(key, value)
     },
+    onDispose: () => {},
     register: contribution => registrations.push(contribution)
   })
 

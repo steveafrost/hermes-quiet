@@ -57,13 +57,13 @@ ${CSS}\n${BROWSER_PALETTE_CSS}
     assert.equal(empty.inputY, 12)
     assert.equal(empty.plusX, 22)
     assert.equal(empty.plusBottom, 22)
-    assert.equal(empty.plusWidth, '12px')
+    assert.equal(empty.plusWidth, '13px')
     assert.equal(empty.plusStroke, '1.5px')
     assert.equal(empty.weight, '400')
     assert.equal(empty.editMax, '192px')
     assert.equal(await evaluate("getComputedStyle(document.getElementById('editor')).paddingTop"),'2px')
     assert.equal(empty.textColor, 'rgb(205, 214, 244)')
-    assert.equal(empty.plusColor, 'rgb(250, 179, 135)')  // theme primary (peach): the plus action carries the accent
+    assert.equal(empty.plusColor, 'rgb(205, 214, 244)')  // native foreground, matching the send/stop control
     assert.equal(await evaluate("getComputedStyle(document.getElementById('outer-fade')).backgroundImage"), 'none')
     const placeholderPixel = await evaluate(`(() => {
       const canvas=document.createElement('canvas');canvas.width=canvas.height=1;const ctx=canvas.getContext('2d');
