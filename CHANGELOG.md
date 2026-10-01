@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented here.
 
+## [1.9.4-local] - 2026-10-01
+
+### Sidebar extras
+
+- Hide only API and Photon source groups and the bottom profile rail by default, without disabling adapters or deleting sessions. Keep Cron jobs, other messaging sources and the statusbar visible.
+- Add the persisted command-palette toggle `Codex Skin: Sidebar extras` to restore these controls without code changes.
+- Identify exact source-brand headings within native sidebar groups because the host does not expose source-ID attributes; never match conversation text.
+- Observe heading/group changes locally, keep the document observer to a no-scan mount sentinel, and disconnect observers/remove owned attributes on unload.
+- Browser regressions cover narrow scope, restoration, heading reuse, and persisted command state.
+
 ## [1.9.3-local] - 2026-10-01
 
 ### Quiet sidebar refinement

@@ -4,7 +4,7 @@ import { jsx } from 'react/jsx-runtime'
 
 const ID = 'codex-chat-look'
 const STYLE_ID = `${ID}-styles`
-const BUILD_ID = 'v1.9.3'
+const BUILD_ID = 'v1.9.4'
 const STORAGE_PREFIX = `${ID}:turn:`
 const LONG_USER_STATE_SUFFIX = ':long-user-expanded'
 const MAX_PERSISTED_LONG_USER_STATES = 250
@@ -13,6 +13,7 @@ const COMPOSER_WIDTH_STORAGE_KEY = 'composer-width'
 const PINNED_USER_MESSAGES_STORAGE_KEY = 'pinned-user-messages'
 const CLEAN_TRANSCRIPT_STORAGE_KEY = 'clean-transcript'
 const TITLEBAR_ICONS_STORAGE_KEY = 'titlebar-icons'
+const SIDEBAR_EXTRAS_STORAGE_KEY = 'sidebar-extras'
 const CLEAN_TRANSCRIPT_EVENT = `${ID}:clean-transcript`
 
 const PLAYBACK_CLOSE_GRACE_MS = 250
@@ -2263,6 +2264,13 @@ html[data-codex-chat-look='true'] [data-tree-split]
   opacity: 0 !important;
 }
 
+/* Sidebar extras are presentation only; sessions and gateway adapters stay intact. */
+html[data-codex-chat-look='true'][data-codex-sidebar-extras='hidden'] [data-slot='sidebar'] [data-codex-sidebar-extra],
+html[data-codex-chat-look='true'][data-codex-sidebar-extras='hidden'] [data-slot='sidebar'] [data-slot='profile-rail'],
+html[data-codex-chat-look='true'][data-codex-sidebar-extras='hidden'] [data-slot='sidebar'] div:has(> [data-slot='profile-rail']) {
+  display: none !important;
+}
+
 /* Codex Skin: the top bar carries no tools at all. Every native titlebar glyph
    — sidebar toggle, layout editor, HUD, pane-flip, right sidebar and settings —
    is hidden; each stays reachable through its ⌘K command and its keybind.
@@ -2662,6 +2670,67 @@ function setTitlebarIconsMode(mode) {
   const normalized = mode === 'all' ? 'all' : 'hidden'
   pluginStorage?.set(TITLEBAR_ICONS_STORAGE_KEY, normalized)
   syncTitlebarIconsRoot()
+}
+
+function readSidebarExtrasMode() {
+  try { return pluginStorage?.get(SIDEBAR_EXTRAS_STORAGE_KEY, 'hidden') === 'visible' ? 'visible' : 'hidden' }
+  catch { return 'hidden' }
+}
+
+function syncSidebarExtrasRoot() {
+  const mode = readSidebarExtrasMode()
+  document.documentElement.setAttribute('data-codex-sidebar-extras', mode)
+  return mode
+}
+
+function setSidebarExtrasMode(mode) {
+  pluginStorage?.set(SIDEBAR_EXTRAS_STORAGE_KEY, mode === 'visible' ? 'visible' : 'hidden')
+  syncSidebarExtrasRoot()
+}
+
+function reconcileSidebarExtras() {
+  // Hermes does not publish source IDs on these groups. Match only the brand
+  // heading's own direct label span, never session titles or the group's body.
+  for (const group of document.querySelectorAll('[data-slot="sidebar"] [data-slot="sidebar-group"]')) {
+    const header = group.querySelector('[class~="group/section-label"]')
+    const label = header?.querySelector(':scope > span:not([aria-hidden="true"])')
+    const name = (label?.textContent || '').trim().toUpperCase()
+    const extra = name === 'API' ? 'api' : name === 'PHOTON' ? 'photon' : null
+    if (extra) {
+      if (group.getAttribute('data-codex-sidebar-extra') !== extra) group.setAttribute('data-codex-sidebar-extra', extra)
+    } else if (group.hasAttribute('data-codex-sidebar-extra')) group.removeAttribute('data-codex-sidebar-extra')
+  }
+}
+
+function installSidebarExtrasRuntime() {
+  let frame = 0
+  const sync = () => { frame = 0; reconcileSidebarExtras() }
+  const schedule = () => { if (!frame) frame = window.requestAnimationFrame(sync) }
+  let sidebar
+  const observer = new MutationObserver(records => {
+    if (records.some(record => record.target.parentElement?.closest('[class~="group/section-label"]') ||
+      record.target.closest?.('[class~="group/section-label"]') || [...record.addedNodes].some(node =>
+        node.nodeType === 1 && (node.matches('[data-slot="sidebar-group"]') || node.querySelector('[class~="group/section-label"]'))))) schedule()
+  })
+  const attach = () => {
+    if (sidebar?.isConnected) return
+    observer.disconnect()
+    sidebar = document.querySelector('[data-slot="sidebar"]')
+    if (sidebar) observer.observe(sidebar, { childList: true, subtree: true, characterData: true })
+    schedule()
+  }
+  // A mount sentinel only: while attached, document mutations perform no scan.
+  const mounts = new MutationObserver(attach)
+  mounts.observe(document.body, { childList: true, subtree: true })
+  attach()
+  sync()
+  return () => {
+    mounts.disconnect()
+    observer.disconnect()
+    if (frame) window.cancelAnimationFrame(frame)
+    document.documentElement.removeAttribute('data-codex-sidebar-extras')
+    for (const group of document.querySelectorAll('[data-codex-sidebar-extra]')) group.removeAttribute('data-codex-sidebar-extra')
+  }
 }
 
 function clearCleanTranscriptDecorations(scope = document) {
@@ -3826,6 +3895,8 @@ function installChatStyleRuntime() {
   syncPinnedUserMessagesRoot()
   syncCleanTranscriptRoot()
   syncTitlebarIconsRoot()
+  syncSidebarExtrasRoot()
+  const uninstallSidebarExtras = installSidebarExtrasRuntime()
   const uninstallTitlebarAlignment = installTitlebarAlignment()
   const uninstallBehavior = installBehaviorRuntime(() => {
     style?.remove()
@@ -3844,6 +3915,7 @@ function installChatStyleRuntime() {
     cornerTargets: document.querySelectorAll('[data-tree-split] > div:has(> [data-tree-group="grp-sessions"]):not([style*="display: none"]) + div > [data-tree-group="grp-main"]').length
   }))
   return () => {
+    uninstallSidebarExtras()
     uninstallTitlebarAlignment()
     uninstallBehavior()
   }
@@ -3908,6 +3980,19 @@ export default {
         keepOpen: true,
         keywords: ['codex', 'skin', 'clean', 'transcript', 'tool', 'calls', 'interim', 'messages'],
         run: () => setCleanTranscriptMode(readCleanTranscriptMode() === 'on' ? 'off' : 'on')
+      }
+    })
+    ctx.register({
+      id: 'toggle-sidebar-extras',
+      area: PALETTE_AREA,
+      data: {
+        id: 'codex-chat-look.toggle-sidebar-extras',
+        label: 'Codex Skin: Sidebar extras',
+        detail: () => readSidebarExtrasMode() === 'hidden' ? 'Hidden' : 'Visible',
+        detailVariant: 'state',
+        keepOpen: true,
+        keywords: ['codex', 'sidebar', 'api', 'photon', 'profiles', 'switcher', 'rail', 'show', 'hide'],
+        run: () => setSidebarExtrasMode(readSidebarExtrasMode() === 'hidden' ? 'visible' : 'hidden')
       }
     })
     ctx.register({
