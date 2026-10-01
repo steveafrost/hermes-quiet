@@ -4,7 +4,7 @@ import { jsx } from 'react/jsx-runtime'
 
 const ID = 'codex-chat-look'
 const STYLE_ID = `${ID}-styles`
-const BUILD_ID = 'v1.9.4'
+const BUILD_ID = 'v1.9.5'
 const STORAGE_PREFIX = `${ID}:turn:`
 const LONG_USER_STATE_SUFFIX = ':long-user-expanded'
 const MAX_PERSISTED_LONG_USER_STATES = 250
@@ -14,6 +14,7 @@ const PINNED_USER_MESSAGES_STORAGE_KEY = 'pinned-user-messages'
 const CLEAN_TRANSCRIPT_STORAGE_KEY = 'clean-transcript'
 const TITLEBAR_ICONS_STORAGE_KEY = 'titlebar-icons'
 const SIDEBAR_EXTRAS_STORAGE_KEY = 'sidebar-extras'
+const SIDEBAR_DENSITY_STORAGE_KEY = 'sidebar-density'
 const CLEAN_TRANSCRIPT_EVENT = `${ID}:clean-transcript`
 
 const PLAYBACK_CLOSE_GRACE_MS = 250
@@ -829,6 +830,31 @@ html[data-codex-chat-look='true'] [data-slot='sidebar'] [class~='group/section']
 html[data-codex-chat-look='true'] [data-slot='sidebar'] :is(.row-hover, [data-sidebar='menu-button'], [data-slot='sidebar-menu-button']):focus-visible {
   outline: 2px solid var(--dt-ring) !important;
   outline-offset: -2px !important;
+}
+
+/* Condensed sidebar. Utility routes remain in the command palette; restoring
+   Comfortable brings the full nav back. Keep search, new session and statuses. */
+html[data-codex-chat-look='true'][data-codex-sidebar-density='compact'] [data-slot='sidebar'] [data-slot='sidebar-menu-item']:not(:has([data-tour='sidebar-nav-new-session'])) {
+  display: none !important;
+}
+html[data-codex-chat-look='true'][data-codex-sidebar-density='compact'] [data-slot='sidebar'] :is(.row-hover, [data-sidebar='menu-button'], [data-slot='sidebar-menu-button']),
+html[data-codex-chat-look='true'][data-codex-sidebar-density='compact'] [data-slot='sidebar'] [class~='group/workspace'] > button:first-child {
+  min-height: 28px !important;
+}
+html[data-codex-chat-look='true'][data-codex-sidebar-density='compact'] [data-slot='sidebar'] :is([data-sidebar='menu-button'], [data-slot='sidebar-menu-button']),
+html[data-codex-chat-look='true'][data-codex-sidebar-density='compact'] [data-slot='sidebar'] .row-hover span[class*='text-[0.8125rem]'],
+html[data-codex-chat-look='true'][data-codex-sidebar-density='compact'] [data-slot='sidebar'] [class~='group/workspace'] > button span[class*='text-[0.8125rem]'] {
+  font-size: 13px !important;
+  line-height: 20px !important;
+}
+html[data-codex-chat-look='true'][data-codex-sidebar-density='compact'] [data-slot='sidebar'] [class~='group/section-label'] > span:first-child,
+html[data-codex-chat-look='true'][data-codex-sidebar-density='compact'] [data-slot='sidebar'] [class~='group/section-label'] > span:first-child > span:last-child {
+  font-size: 12px !important;
+  line-height: 18px !important;
+}
+html[data-codex-chat-look='true'][data-codex-sidebar-density='compact'] [data-slot='sidebar'] [class~='group/section'] {
+  padding-top: 8px !important;
+  padding-bottom: 4px !important;
 }
 
 /* Names carry the hierarchy; section labels and utility icons stay quieter.
@@ -2672,6 +2698,22 @@ function setTitlebarIconsMode(mode) {
   syncTitlebarIconsRoot()
 }
 
+function readSidebarDensityMode() {
+  try { return pluginStorage?.get(SIDEBAR_DENSITY_STORAGE_KEY, 'compact') === 'comfortable' ? 'comfortable' : 'compact' }
+  catch { return 'compact' }
+}
+
+function syncSidebarDensityRoot() {
+  const mode = readSidebarDensityMode()
+  document.documentElement.setAttribute('data-codex-sidebar-density', mode)
+  return mode
+}
+
+function setSidebarDensityMode(mode) {
+  pluginStorage?.set(SIDEBAR_DENSITY_STORAGE_KEY, mode === 'comfortable' ? 'comfortable' : 'compact')
+  syncSidebarDensityRoot()
+}
+
 function readSidebarExtrasMode() {
   try { return pluginStorage?.get(SIDEBAR_EXTRAS_STORAGE_KEY, 'hidden') === 'visible' ? 'visible' : 'hidden' }
   catch { return 'hidden' }
@@ -3896,6 +3938,7 @@ function installChatStyleRuntime() {
   syncCleanTranscriptRoot()
   syncTitlebarIconsRoot()
   syncSidebarExtrasRoot()
+  syncSidebarDensityRoot()
   const uninstallSidebarExtras = installSidebarExtrasRuntime()
   const uninstallTitlebarAlignment = installTitlebarAlignment()
   const uninstallBehavior = installBehaviorRuntime(() => {
@@ -3905,6 +3948,7 @@ function installChatStyleRuntime() {
     root.removeAttribute('data-codex-pinned-user-messages')
     root.removeAttribute('data-codex-clean-transcript')
     root.removeAttribute('data-codex-titlebar-icons')
+    root.removeAttribute('data-codex-sidebar-density')
     if (root.dataset.codexChatLookBuild === BUILD_ID) delete root.dataset.codexChatLookBuild
     if (root.dataset.codexChatLookRuntime === BUILD_ID) delete root.dataset.codexChatLookRuntime
   })
@@ -3980,6 +4024,19 @@ export default {
         keepOpen: true,
         keywords: ['codex', 'skin', 'clean', 'transcript', 'tool', 'calls', 'interim', 'messages'],
         run: () => setCleanTranscriptMode(readCleanTranscriptMode() === 'on' ? 'off' : 'on')
+      }
+    })
+    ctx.register({
+      id: 'toggle-sidebar-density',
+      area: PALETTE_AREA,
+      data: {
+        id: 'codex-chat-look.toggle-sidebar-density',
+        label: 'Codex Skin: Sidebar density',
+        detail: () => readSidebarDensityMode() === 'compact' ? 'Compact' : 'Comfortable',
+        detailVariant: 'state',
+        keepOpen: true,
+        keywords: ['codex', 'sidebar', 'density', 'compact', 'condensed', 'comfortable', 'navigation', 'restore'],
+        run: () => setSidebarDensityMode(readSidebarDensityMode() === 'compact' ? 'comfortable' : 'compact')
       }
     })
     ctx.register({

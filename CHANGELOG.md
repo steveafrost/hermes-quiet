@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented here.
 
+## [1.9.5-local] - 2026-10-01
+
+### Compact sidebar
+
+- Default to a persisted Compact density: 28px minimum rows, 13px titles/navigation, 12px section labels and tighter group spacing.
+- Keep New session and search visible while hiding the secondary navigation list; native routes remain accessible through the command palette and Comfortable restores the complete navigation.
+- Preserve working/status cues, pinning, date groups, keyboard focus, and the independent Sidebar extras preference.
+- Add `Codex Skin: Sidebar density` to toggle Compact / Comfortable, with browser coverage for layout, primary controls and persisted restoration.
+
 ## [1.9.4-local] - 2026-10-01
 
 ### Sidebar extras
