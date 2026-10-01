@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented here.
 
+## [1.9.6-local] - 2026-10-01
+
+### Profile and gateway dropdown
+
+- Add a quieter 18px sidebar header and a Catppuccin menu with spaced device icons, secondary descriptions, and a peach current-selection checkmark.
+- List registered gateways as Laptop, Mr Chips, and Scooter; include the existing Media profile only on Mr Chips. Keep canonical connection/profile identifiers for switching.
+- Preserve unavailable gateways as visible retryable choices, and expose gateway/profile management without changing connection registrations.
+- Handle partial roster failures and transformed titlebar positioning; preserve compact 28px session rows and hidden bottom chrome.
+- Carry the earlier typography, right-side semantic indicators, hidden idle dots, keyboard-revealed search, and session-only hover-menu refinements.
+
 ## [1.9.5-local] - 2026-10-01
 
 ### Compact sidebar

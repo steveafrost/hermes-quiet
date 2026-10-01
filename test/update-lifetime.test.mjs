@@ -17,7 +17,8 @@ async function fixture(){
 
 test('plugin services do not claim page-owned titlebar chrome',async()=>{
  const f=await fixture()
- assert.ok(f.entries.every(e=>!e.area.startsWith('titleBar.')))
+ assert.ok(f.entries.filter(e=>e.id!=='profile-header').every(e=>!e.area.startsWith('titleBar.')))
+ assert.equal(f.entries.find(e=>e.id==='profile-header').area,'titleBar.left')
  assert.equal(f.entries.find(e=>e.id==='update-runtime').area,'composer.leading')
  f.disposers.forEach(fn=>fn())
 })

@@ -31,7 +31,7 @@ function decodeSnapshot(output) {
   return JSON.parse(Buffer.from(match[1], 'base64').toString('utf8'))
 }
 
-test('sidebar hides only the pure-idle grey dot', async t => {
+test('sidebar hides grey and project-colored idle dots but preserves semantic states', async t => {
   const chrome = chromeExecutable()
 
   if (!chrome) {
@@ -57,7 +57,7 @@ test('sidebar hides only the pure-idle grey dot', async t => {
     ['unread', "aria-label='Finished' role='status' class='size-1.5 rounded-full bg-emerald-500'"]
   ]
   const rows = states
-    .map(([id, attributes]) => `<div class="row-hover"><span class="flex items-center gap-0.5"><span id="${id}" ${attributes}></span></span><span>${id}</span></div>`)
+    .map(([id, attributes]) => `<div class="row-hover"><span class="flex items-center gap-0.5"><span id="${id}" ${attributes}></span></span><span class="hover-marquee">${id}</span></div>`)
     .join('')
   const snapshotScript = `
     const ids = ${JSON.stringify(states.map(([id]) => id))}
@@ -107,9 +107,8 @@ test('sidebar hides only the pure-idle grey dot', async t => {
     )
     const result = decodeSnapshot(stdout)
 
-    assert.equal(result['idle-grey'].display, 'none')
-
-    for (const id of states.map(([id]) => id).filter(id => id !== 'idle-grey')) {
+    for (const id of ['idle-grey', 'idle-project']) assert.equal(result[id].display, 'none', `${id} must be hidden`)
+    for (const id of states.map(([id]) => id).filter(id => !id.startsWith('idle-'))) {
       assert.notEqual(result[id].display, 'none', `${id} must remain visible`)
       assert.notEqual(result[id].visibility, 'hidden', `${id} must remain visible`)
       assert.notEqual(result[id].width, '0px', `${id} must retain its native geometry`)

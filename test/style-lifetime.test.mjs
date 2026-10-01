@@ -13,7 +13,7 @@ test('styles follow plugin lifetime, including immediate disable and rapid repla
     await browser.call('Page.navigate', { url: 'data:text/html,<!doctype html><html><head></head><body><main>Native content</main></body></html>' })
     await browser.evaluate(`(() => {
       const host={state:{activeSessionId:{get:()=>null},profile:{get:()=> 'default'}}};
-      const PALETTE_AREA='palette',THEMES_AREA='themes',jsx=()=>null;
+      const TITLEBAR_AREAS={left:'titleBar.left'},PALETTE_AREA='palette',THEMES_AREA='themes',jsx=()=>null;
       ${source}
       window.enableSkin=()=>{
         const disposers=[];

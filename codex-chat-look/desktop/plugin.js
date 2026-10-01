@@ -1,10 +1,10 @@
-import { host, PALETTE_AREA, THEMES_AREA, useQuery } from '@hermes/plugin-sdk'
-import { useEffect, useRef } from 'react'
+import { host, PALETTE_AREA, THEMES_AREA, TITLEBAR_AREAS, useQuery, useValue, DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, Codicon } from '@hermes/plugin-sdk'
+import { useEffect, useRef, useState } from 'react'
 import { jsx } from 'react/jsx-runtime'
 
 const ID = 'codex-chat-look'
 const STYLE_ID = `${ID}-styles`
-const BUILD_ID = 'v1.9.5'
+const BUILD_ID = 'v1.9.6'
 const STORAGE_PREFIX = `${ID}:turn:`
 const LONG_USER_STATE_SUFFIX = ':long-user-expanded'
 const MAX_PERSISTED_LONG_USER_STATES = 250
@@ -126,7 +126,8 @@ html[data-codex-chat-look='true'] {
   --codex-color-border-subtle: var(--ui-stroke-tertiary);
   --codex-color-hover: var(--ui-row-hover-background);
   --codex-color-active: var(--ui-row-active-background);
-  --codex-sidebar-label: color-mix(in srgb, var(--codex-color-text) 78%, var(--codex-color-sidebar));
+  --codex-sidebar-label: color-mix(in srgb, var(--codex-color-text) 85%, var(--codex-color-sidebar));
+  --codex-sidebar-caption: var(--codex-sidebar-muted);
   --codex-sidebar-muted: color-mix(in srgb, var(--codex-color-text) 65%, var(--codex-color-sidebar));
   --codex-sidebar-hover: color-mix(in srgb, var(--codex-color-text) 4%, transparent);
   --codex-sidebar-active: color-mix(in srgb, var(--codex-color-text) 7%, transparent);
@@ -260,6 +261,11 @@ html[data-codex-chat-look='true'] [data-slot='aui_user-inline-text'] {
   line-height: 22px !important;
   font-weight: 400 !important;
   color: var(--codex-color-text) !important;
+}
+
+/* Keep genuine emphasis without the native browser's heavier bold default. */
+html[data-codex-chat-look='true'] [data-slot='aui_assistant-message-content'] .aui-md :is(strong, b) {
+  font-weight: 600 !important;
 }
 
 html[data-codex-chat-look='true'] [data-slot='aui_assistant-message-content'] .aui-md li::marker {
@@ -770,7 +776,7 @@ html[data-codex-chat-look='true'] [data-slot='sidebar'] [class~='group/section-l
 }
 
 html[data-codex-chat-look='true'] [data-slot='sidebar'] [class~='group/section-label'] > span:first-child {
-  color: var(--codex-sidebar-muted) !important;
+  color: var(--codex-sidebar-caption) !important;
   font-family: var(--dt-font-sans, ${SYSTEM_FONT}) !important;
   font-size: 14px !important;
   line-height: 21px !important;
@@ -806,6 +812,13 @@ html[data-codex-chat-look='true'] [data-slot='sidebar'] span[class*='text-[0.812
   text-transform: none !important;
 }
 
+/* Measured ink colors from the supplied Codex Mocha reference. Keep this
+   hierarchy dark-only: light and external themes retain adaptive tokens. */
+html[data-codex-chat-look='true'][data-hermes-theme='codex-chat'][data-hermes-mode='dark'] {
+  --codex-sidebar-label: color-mix(in srgb, var(--theme-foreground) 85%, var(--theme-sidebar-seed));
+  --codex-sidebar-caption: color-mix(in srgb, var(--theme-foreground) 38%, var(--theme-sidebar-seed));
+}
+
 /* The native glass body is one painter and clears all nested field tokens.
    Give the sidebar its own solid reference surface without changing glass
    preference or repeatedly layering translucent fills. The other themes stay native. */
@@ -833,9 +846,21 @@ html[data-codex-chat-look='true'] [data-slot='sidebar'] :is(.row-hover, [data-si
 }
 
 /* Condensed sidebar. Utility routes remain in the command palette; restoring
-   Comfortable brings the full nav back. Keep search, new session and statuses. */
-html[data-codex-chat-look='true'][data-codex-sidebar-density='compact'] [data-slot='sidebar'] [data-slot='sidebar-menu-item']:not(:has([data-tour='sidebar-nav-new-session'])) {
+   Comfortable brings the full nav back. Hotkeys still own new/search actions. */
+html[data-codex-chat-look='true'][data-codex-sidebar-density='compact'] [data-slot='sidebar'] [data-slot='sidebar-menu-item'],
+html[data-codex-chat-look='true'][data-codex-sidebar-density='compact'] [data-slot='sidebar'] [data-slot='sidebar-group']:has([data-tour='sidebar-nav-new-session']) {
   display: none !important;
+}
+/* Collapse the resting search without display:none: the native focus-search
+   hotkey must still be able to focus it. Focus or a query restores the field. */
+html[data-codex-chat-look='true'][data-codex-sidebar-density='compact'] [data-slot='sidebar'] div[class~='shrink-0'][class~='px-2'][class~='pb-1'][class~='pt-1']:has(> div > input[placeholder]):not(:focus-within):not(:has(input:not(:placeholder-shown))) {
+  max-height: 0 !important;
+  min-height: 0 !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
 html[data-codex-chat-look='true'][data-codex-sidebar-density='compact'] [data-slot='sidebar'] :is(.row-hover, [data-sidebar='menu-button'], [data-slot='sidebar-menu-button']),
 html[data-codex-chat-look='true'][data-codex-sidebar-density='compact'] [data-slot='sidebar'] [class~='group/workspace'] > button:first-child {
@@ -844,22 +869,34 @@ html[data-codex-chat-look='true'][data-codex-sidebar-density='compact'] [data-sl
 html[data-codex-chat-look='true'][data-codex-sidebar-density='compact'] [data-slot='sidebar'] :is([data-sidebar='menu-button'], [data-slot='sidebar-menu-button']),
 html[data-codex-chat-look='true'][data-codex-sidebar-density='compact'] [data-slot='sidebar'] .row-hover span[class*='text-[0.8125rem]'],
 html[data-codex-chat-look='true'][data-codex-sidebar-density='compact'] [data-slot='sidebar'] [class~='group/workspace'] > button span[class*='text-[0.8125rem]'] {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 20px !important;
 }
 html[data-codex-chat-look='true'][data-codex-sidebar-density='compact'] [data-slot='sidebar'] [class~='group/section-label'] > span:first-child,
 html[data-codex-chat-look='true'][data-codex-sidebar-density='compact'] [data-slot='sidebar'] [class~='group/section-label'] > span:first-child > span:last-child {
-  font-size: 12px !important;
-  line-height: 18px !important;
+  font-size: 14px !important;
+  line-height: 21px !important;
 }
 html[data-codex-chat-look='true'][data-codex-sidebar-density='compact'] [data-slot='sidebar'] [class~='group/section'] {
   padding-top: 8px !important;
   padding-bottom: 4px !important;
 }
 
+/* Dates are captions, not bold tracked micro-headlines. */
+html[data-codex-chat-look='true'] [data-slot='sidebar'] [class~='group/workspace'] span[class*='text-[0.64rem]'] {
+  font-family: var(--dt-font-sans, ${SYSTEM_FONT}) !important;
+  font-size: 12px !important;
+  line-height: 18px !important;
+  font-weight: 400 !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+  color: var(--codex-sidebar-caption) !important;
+}
+
 /* Names carry the hierarchy; section labels and utility icons stay quieter.
    Never dim a whole row: its native status and project colors must survive. */
 html[data-codex-chat-look='true'] [data-slot='sidebar'] .row-hover span[class*='text-[0.8125rem]'],
+html[data-codex-chat-look='true'] [data-slot='sidebar'] [class~='group/workspace'] > button span[class*='text-[0.8125rem]'],
 html[data-codex-chat-look='true'] :is([data-slot='sidebar-menu-button'], [data-sidebar='menu-button']) {
   color: var(--codex-sidebar-label) !important;
 }
@@ -872,11 +909,28 @@ html[data-codex-chat-look='true'] :is([data-slot='sidebar-menu-button'], [data-s
   color: var(--codex-sidebar-muted) !important;
 }
 
-/* Pure idle has no information to communicate. Hide only Hermes' uncolored
-   grey fallback dot; keep project-colored idle identity and every semantic
-   state (draft, working, stalled, background, unread and needs-input). */
-html[data-codex-chat-look='true'] [data-slot='sidebar'] .row-hover
-  span[aria-hidden='true'][class~='size-1'][class*='bg-(--ui-text-quaternary)']:not([style*='background-color']) {
+/* Session actions remain available through the native row context menu.
+   Hide only its duplicate kebab trigger, not trailing PR/profile controls. */
+html[data-codex-chat-look='true'] [data-slot='sidebar'] .row-hover:has(.hover-marquee) [data-row-actions] button:has(.codicon-kebab-vertical) {
+  display: none !important;
+}
+
+/* Hide only session idle dots, including project-colored idle identity.
+   Draft, working, unread and attention states retain their native indicators.
+   Keep the lead control itself for keyboard/pointer reorder. */
+html[data-codex-chat-look='true'] [data-slot='sidebar'] .row-hover:has(.hover-marquee)
+  span[aria-hidden='true'][class~='size-1'][class*='bg-(--ui-text-quaternary)'] {
+  display: none !important;
+}
+
+/* Preserve every non-idle status. Move the existing lead (including its reorder
+   control) after the title without touching React's DOM or dot state machinery.
+   Match flat session bodies only: card headers/project rows stay native. */
+html[data-codex-chat-look='true'] [data-slot='sidebar'] .row-hover > div:has(> span > button .hover-marquee) > :is([data-reorder-handle], span[class~='size-3.5']) {
+  order: 99 !important;
+}
+html[data-codex-chat-look='true'] [data-slot='sidebar'] .row-hover:has(> div > span > button .hover-marquee) [data-row-actions] time,
+html[data-codex-chat-look='true'] [data-slot='sidebar'] .row-hover:has(> div > span > button .hover-marquee) [data-row-actions] span:has(> time) {
   display: none !important;
 }
 
@@ -2288,6 +2342,74 @@ html[data-codex-chat-look='true'] [data-tree-split]
 html[data-codex-chat-look='true'] [data-tree-split]
   > div:has(> [data-tree-group] aside[data-preview-browser]) > [role='separator'][class~='inset-y-0'] > span:nth-child(2) {
   opacity: 0 !important;
+}
+
+/* A native SDK dropdown in the permanent titlebar contribution slot. CSS
+   anchors place it in the sidebar without moving any React-owned nodes. */
+html[data-codex-chat-look='true'] [data-slot='sidebar'] { anchor-name: --codex-profile-sidebar; }
+html[data-codex-chat-look='true']:has([data-codex-profile-header]) [data-slot='sidebar-content']::before {
+  content: ''; display: block; flex: 0 0 52px;
+}
+html[data-codex-chat-look='true'] [data-codex-profile-header] {
+  position: fixed; position-anchor: --codex-profile-sidebar;
+  left: var(--codex-profile-left, calc(anchor(left) + 16px)); top: var(--codex-profile-top, calc(anchor(top) + 8px));
+  width: var(--codex-profile-width, calc(anchor-size(width) - 32px)); height: 36px;
+  visibility: var(--codex-profile-visibility, visible);
+  position-visibility: anchors-visible; z-index: 40;
+  -webkit-app-region: no-drag; pointer-events: auto;
+}
+html[data-codex-chat-look='true'] [data-codex-profile-header] > button {
+  display: inline-flex; align-items: center; gap: 8px; max-width: 100%;
+  height: 36px; padding: 0 2px; border: 0; border-radius: 6px;
+  background: transparent; color: var(--codex-sidebar-label);
+  font-family: inherit; font-size: 18px; font-weight: 400; line-height: 26px;
+  cursor: pointer; -webkit-app-region: no-drag;
+}
+html[data-codex-chat-look='true'] [data-codex-profile-header] > button > span:first-child {
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+html[data-codex-chat-look='true'] [data-codex-profile-header] > button:hover,
+html[data-codex-chat-look='true'] [data-codex-profile-header] > button[data-state='open'] {
+  color: var(--codex-color-text); background: var(--codex-color-hover);
+}
+html[data-codex-chat-look='true'] [data-codex-profile-header] > button:focus-visible {
+  outline: 2px solid var(--theme-ring); outline-offset: 2px;
+}
+
+html[data-codex-chat-look='true'] [data-codex-profile-header] .codicon-chevron-down { opacity: .5; }
+html[data-codex-chat-look='true'] [data-codex-profile-menu] {
+  box-sizing: border-box; width: 248px; max-width: calc(100vw - 24px);
+  padding: 6px !important; border-radius: 12px !important;
+  background: var(--codex-color-elevated) !important;
+  border: 1px solid color-mix(in srgb, var(--codex-color-text) 12%, transparent) !important;
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--theme-background-seed, var(--codex-color-chat)) 65%, transparent) !important;
+  color: var(--codex-color-text); font-size: 13px;
+}
+html[data-codex-chat-look='true'] [data-codex-profile-menu] [role^='menuitem'] {
+  display: flex; align-items: center; gap: 10px; min-height: 32px;
+  padding: 7px 10px !important; border-radius: 7px !important;
+  font-size: 13px !important; font-weight: 400 !important;
+}
+html[data-codex-chat-look='true'] [data-codex-profile-menu] [data-codex-fleet-choice] {
+  min-height: 48px; padding: 8px 10px !important;
+}
+html[data-codex-chat-look='true'] [data-codex-profile-menu] [role^='menuitem'][data-highlighted] {
+  background: color-mix(in srgb, var(--codex-color-text) 8%, transparent) !important;
+}
+html[data-codex-chat-look='true'] [data-codex-profile-menu] .codex-fleet-choice-text {
+  display: flex; flex-direction: column; flex: 1; min-width: 0; gap: 3px;
+  line-height: 16px; font-size: 13px;
+}
+html[data-codex-chat-look='true'] [data-codex-profile-menu] .codex-fleet-choice-text > span {
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+html[data-codex-chat-look='true'] [data-codex-profile-menu] .codex-fleet-choice-detail {
+  font-size: 11px; line-height: 14px;
+  color: color-mix(in srgb, var(--codex-color-text) 64%, var(--codex-color-elevated));
+}
+html[data-codex-chat-look='true'] [data-codex-profile-menu] .codex-fleet-check { color: var(--codex-color-primary); }
+html[data-codex-chat-look='true'] [data-codex-profile-menu] [data-slot='dropdown-menu-separator'] {
+  margin: 6px 4px !important; opacity: .6;
 }
 
 /* Sidebar extras are presentation only; sessions and gateway adapters stay intact. */
@@ -3921,6 +4043,56 @@ function installTitlebarAlignment() {
   }
 }
 
+function installProfileHeaderPositioning() {
+  let frame = 0, disposed = false
+  const marked = new Set(), observed = new Set()
+  const write = (element, key, value) => { if (element.style.getPropertyValue(key) !== value) element.style.setProperty(key, value) }
+  const sync = () => {
+    frame = 0
+    if (disposed) return
+    const header = document.querySelector('[data-codex-profile-header]')
+    const sidebar = [...document.querySelectorAll('[data-slot="sidebar"]')].find(el => {
+      const box = el.getBoundingClientRect(); return box.width > 0 && box.height > 0 && getComputedStyle(el).visibility !== 'hidden'
+    })
+    const current = new Set([header, sidebar].filter(Boolean))
+    for (const el of observed) if (!current.has(el)) { resize.unobserve(el); observed.delete(el) }
+    for (const el of current) if (!observed.has(el)) { resize.observe(el); observed.add(el) }
+    if (!header) return
+    marked.add(header)
+    write(header, '--codex-profile-visibility', sidebar ? 'visible' : 'hidden')
+    if (!sidebar) return
+    const target = sidebar.getBoundingClientRect()
+    if (!header.style.getPropertyValue('--codex-profile-left')) {
+      write(header, '--codex-profile-left', '0px'); write(header, '--codex-profile-top', '0px')
+      write(header, '--codex-profile-width', `${Math.max(1, target.width - 32)}px`)
+    }
+    // Titlebar clusters may establish transformed fixed-position containing
+    // blocks. Convert viewport deltas through their actual render scale.
+    const box = header.getBoundingClientRect()
+    const scaleX = box.width / header.offsetWidth || 1
+    const scaleY = box.height / header.offsetHeight || 1
+    const left = parseFloat(header.style.getPropertyValue('--codex-profile-left')) || 0
+    const top = parseFloat(header.style.getPropertyValue('--codex-profile-top')) || 0
+    write(header, '--codex-profile-left', `${Math.round((left + (target.left + 16 - box.left) / scaleX) * 100) / 100}px`)
+    write(header, '--codex-profile-top', `${Math.round((top + (target.top + 8 - box.top) / scaleY) * 100) / 100}px`)
+    write(header, '--codex-profile-width', `${Math.round(Math.max(1, target.width - 32) / scaleX * 100) / 100}px`)
+  }
+  const schedule = () => { if (!disposed && !frame) frame = window.requestAnimationFrame(sync) }
+  const resize = new ResizeObserver(schedule)
+  const relevant = node => node.nodeType === 1 && (node.matches('[data-slot="sidebar"],[data-codex-profile-header]') || node.querySelector('[data-slot="sidebar"],[data-codex-profile-header]'))
+  const mounts = new MutationObserver(records => {
+    if (records.some(record => [...record.addedNodes, ...record.removedNodes].some(relevant))) schedule()
+  })
+  mounts.observe(document.body, { childList: true, subtree: true })
+  window.addEventListener('resize', schedule)
+  sync()
+  return () => {
+    disposed = true; if (frame) window.cancelAnimationFrame(frame)
+    mounts.disconnect(); resize.disconnect(); window.removeEventListener('resize', schedule)
+    for (const header of marked) for (const key of ['left', 'top', 'width', 'visibility']) header.style.removeProperty(`--codex-profile-${key}`)
+  }
+}
+
 function installChatStyleRuntime() {
   const root = document.documentElement
   let style = document.getElementById(STYLE_ID)
@@ -3941,6 +4113,7 @@ function installChatStyleRuntime() {
   syncSidebarDensityRoot()
   const uninstallSidebarExtras = installSidebarExtrasRuntime()
   const uninstallTitlebarAlignment = installTitlebarAlignment()
+  const uninstallProfileHeaderPositioning = installProfileHeaderPositioning()
   const uninstallBehavior = installBehaviorRuntime(() => {
     style?.remove()
     delete root.dataset.codexChatLook
@@ -3960,9 +4133,106 @@ function installChatStyleRuntime() {
   }))
   return () => {
     uninstallSidebarExtras()
+    uninstallProfileHeaderPositioning()
     uninstallTitlebarAlignment()
     uninstallBehavior()
   }
+}
+
+function profileHeaderLabel(profiles, active) {
+  const profile = profiles.find(row => row.name === active)
+  return String(profile?.display_name || '').trim() || active || 'default'
+}
+
+async function switchHeaderProfile(name, connectionId) {
+  if (name === host.state.profile.get() && connectionId === host.activeConnectionId()) return
+  await host.ensureAgent(connectionId, name)
+}
+
+function gatewayHeaderName(connection) {
+  if (connection.kind === 'local') return 'Laptop'
+  if (/^mr[- ]chips(?:\s+\d+)?$/i.test(connection.label)) return 'Mr Chips'
+  if (/^scooter$/i.test(connection.label)) return 'Scooter'
+  return connection.label
+}
+
+function buildFleetHeaderChoices(connections, roster = {}) {
+  const sources = roster.sources || [], agents = roster.agents || []
+  const rank = label => ['Laptop', 'Mr Chips', 'Scooter'].indexOf(label)
+  const rows = connections.map(connection => {
+    const source = sources.find(row => row.connectionId === connection.id)
+    const label = gatewayHeaderName(connection)
+    return {
+      key: `${connection.id}::default`, connectionId: connection.id, profile: 'default', label,
+      icon: connection.kind === 'local' ? 'device-desktop' : 'server',
+      detail: source?.needsSignIn ? 'Sign in required' : source?.reachable === false ? 'Unavailable' : source?.error === 'connect-on-demand' ? 'Connect on demand' : connection.kind === 'local' ? 'This Mac' : 'Gateway'
+    }
+  }).sort((a, b) => (rank(a.label) < 0 ? 3 : rank(a.label)) - (rank(b.label) < 0 ? 3 : rank(b.label)) || a.label.localeCompare(b.label))
+  const chips = connections.find(connection => gatewayHeaderName(connection) === 'Mr Chips')
+  if (chips && agents.some(agent => agent.connectionId === chips.id && agent.profile === 'media')) {
+    rows.push({ key: `${chips.id}::media`, connectionId: chips.id, profile: 'media', label: 'Media', icon: 'play-circle', detail: 'Profile on Mr Chips' })
+  }
+  return rows
+}
+
+function fleetHeaderLabel(rows, connectionId, profile) {
+  return rows.find(row => row.connectionId === connectionId && row.profile === profile)?.label || profile || 'Laptop'
+}
+
+async function loadFleetHeaderData() {
+  const [connections, roster] = await Promise.allSettled([host.connections(), host.agents()])
+  if (connections.status === 'rejected') throw connections.reason
+  return { connections: connections.value, roster: roster.status === 'fulfilled' ? roster.value : {}, error: roster.status === 'rejected' ? String(roster.reason?.message || roster.reason) : '' }
+}
+
+function CodexProfileHeader() {
+  const active = useValue(host.state.profile)
+  useValue(host.state.gateway)
+  const [open, setOpen] = useState(false)
+  const [pending, setPending] = useState(null)
+  const switching = useRef(false)
+  const query = useQuery({ queryKey: [ID, 'header-fleet'], queryFn: loadFleetHeaderData, staleTime: 60000 })
+  const connections = query.data?.connections || []
+  const connectionId = host.activeConnectionId() || connections.find(row => row.primary)?.id || 'local'
+  const rows = buildFleetHeaderChoices(connections, query.data?.roster || {})
+  const label = fleetHeaderLabel(rows, connectionId, active)
+  const select = async row => {
+    if (switching.current) return
+    switching.current = true; setPending(row.key)
+    try { await switchHeaderProfile(row.profile, row.connectionId) }
+    catch (error) { host.notify({ kind: 'error', message: `Could not connect to ${row.label}: ${error?.message || error}` }) }
+    finally { switching.current = false; setPending(null) }
+  }
+  return jsx('div', { 'data-codex-profile-header': '', children: jsx(DropdownMenu, {
+    open, onOpenChange: value => { setOpen(value); if (value) query.refetch() },
+    children: [
+      jsx(DropdownMenuTrigger, { asChild: true, children: jsx('button', {
+        type: 'button', 'aria-label': `Switch gateway or profile: ${label}`, 'aria-busy': Boolean(pending),
+        children: [jsx('span', { children: label }), jsx(Codicon, { name: pending ? 'loading' : 'chevron-down', size: '0.75rem', className: pending ? 'animate-spin' : '', 'aria-hidden': true })]
+      }) }),
+      jsx(DropdownMenuContent, { align: 'start', side: 'bottom', sideOffset: 8, collisionPadding: 12,
+        'data-codex-profile-menu': '', children: [
+          ...rows.map(row => {
+            const selected = row.connectionId === connectionId && row.profile === active
+            return jsx(DropdownMenuItem, {
+              role: 'menuitemradio', 'aria-checked': selected, 'data-codex-fleet-choice': row.key,
+              disabled: Boolean(pending), onSelect: () => select(row),
+              children: [
+                jsx(Codicon, { name: row.icon, size: '1rem', 'aria-hidden': true }),
+                jsx('span', { className: 'codex-fleet-choice-text', children: [jsx('span', { children: row.label }), jsx('span', { className: 'codex-fleet-choice-detail', children: row.detail })] }),
+                selected ? jsx(Codicon, { name: 'check', size: '0.875rem', className: 'codex-fleet-check', 'aria-hidden': true }) : null
+              ]
+            }, row.key)
+          }),
+          query.isPending ? jsx(DropdownMenuItem, { disabled: true, children: 'Loading gateways…' }) : null,
+          query.isError || query.data?.error ? jsx(DropdownMenuItem, { onSelect: event => { event.preventDefault(); query.refetch() }, children: 'Refresh gateway list' }) : null,
+          jsx(DropdownMenuSeparator, {}),
+          jsx(DropdownMenuItem, { onSelect: () => host.navigate('/settings?tab=gateway'), children: [jsx(Codicon, { name: 'plug', size: '0.875rem', 'aria-hidden': true }), jsx('span', { children: 'Manage gateways…' })] }),
+          jsx(DropdownMenuItem, { onSelect: () => host.navigate('/profiles'), children: [jsx(Codicon, { name: 'settings-gear', size: '0.875rem', 'aria-hidden': true }), jsx('span', { children: 'Manage profiles…' })] })
+        ]
+      })
+    ]
+  }) })
 }
 
 export default {
@@ -3984,6 +4254,7 @@ export default {
     if (globalThis.document?.body) queueMicrotask(() => {
       if (!disposed) uninstallStyle = installChatStyleRuntime()
     })
+    ctx.register({ id: 'profile-header', area: TITLEBAR_AREAS.left, order: 0, render: () => jsx(CodexProfileHeader, {}) })
     ctx.register({ id: 'update-runtime', area: 'composer.leading', order: 19, render: () => jsx(CodexUpdateRuntime, { updater }) })
     ctx.register({ id: 'update-button', area: 'composer.leading', order: 20, render: () => jsx(CodexUpdateButton, { updater }) })
     ctx.register({ id: 'theme', area: THEMES_AREA, data: CODEX_THEME })

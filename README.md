@@ -1,5 +1,10 @@
 # Codex Skin for Hermes Desktop
 
+> **Local variant:** This branch carries the approved Catppuccin and fleet-dropdown
+> build v1.9.6, with upstream self-replacement disabled. See
+> [LOCAL-VARIANT.md](LOCAL-VARIANT.md) for included features, update safety and recovery.
+> The upstream release/update instructions below do not override that local policy.
+
 ![Codex Skin using a native Hermes theme with the Glass background](screenshots/codex-skin-native-glass.png)
 
 Codex Skin gives Hermes Desktop a Codex-inspired chat layout while preserving Hermes' native behavior. It supports native Hermes themes and the native Glass background, while the original Codex colors remain available through the **Codex Skin** theme in Appearance settings.

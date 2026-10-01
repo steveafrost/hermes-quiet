@@ -7,8 +7,8 @@ const moduleUrl = text => 'data:text/javascript;base64,' + Buffer.from(text).toS
 test('runtime ESM import registers the current plugin without titlebar autohide', async () => {
   const source = await readFile(new URL('../codex-chat-look/plugin.js', import.meta.url), 'utf8')
   const shims = {
-    '@hermes/plugin-sdk': moduleUrl("export const useQuery=()=>({});export const host={state:{activeSessionId:{get:()=>null},profile:{get:()=> 'default'}}},PALETTE_AREA='palette',THEMES_AREA='themes',TITLEBAR_AREAS={center:'titleBar.center',left:'titleBar.left',right:'titleBar.right'};"),
-    react: moduleUrl('export const useEffect=()=>{},useRef=()=>({current:null});'),
+    '@hermes/plugin-sdk': moduleUrl("export const useQuery=()=>({});export const useValue=()=>null,Codicon=()=>null,DropdownMenu=()=>null,DropdownMenuTrigger=()=>null,DropdownMenuContent=()=>null,DropdownMenuItem=()=>null,DropdownMenuRadioGroup=()=>null,DropdownMenuRadioItem=()=>null,DropdownMenuSeparator=()=>null;export const host={state:{activeSessionId:{get:()=>null},profile:{get:()=> 'default'}}},PALETTE_AREA='palette',THEMES_AREA='themes',TITLEBAR_AREAS={center:'titleBar.center',left:'titleBar.left',right:'titleBar.right'};"),
+    react: moduleUrl('export const useEffect=()=>{},useRef=()=>({current:null}),useState=()=>[null,()=>{}];'),
     'react/jsx-runtime': moduleUrl('export const jsx=()=>null;')
   }
   const rewritten = source.replace(/from '([^']+)'/g, (match, name) => {
@@ -24,6 +24,6 @@ test('runtime ESM import registers the current plugin without titlebar autohide'
     register: entry => registrations.push(entry)
   })
   assert.ok(registrations.some(entry => entry.id === 'update-runtime'))
-  assert.ok(registrations.every(entry => !entry.area.startsWith('titleBar.')))
+  assert.ok(registrations.every(entry => entry.id==='profile-header'||!entry.area.startsWith('titleBar.')))
   assert.ok(!registrations.some(entry => entry.id === 'toggle-titlebar-autohide'))
 })
