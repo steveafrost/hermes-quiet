@@ -37,7 +37,7 @@ test('composer width is a persistent Codex versus Hermes palette setting', () =>
   assert.match(source, /const COMPOSER_WIDTH_STORAGE_KEY = 'composer-width'/)
   assert.match(source, /pluginStorage\?\.get\(COMPOSER_WIDTH_STORAGE_KEY, 'codex'\)/)
   assert.match(source, /root\.setAttribute\('data-codex-composer-width', mode\)/)
-  assert.match(source, /label: 'Codex Skin: Composer width'/)
+  assert.match(source, /label: 'Hermes Quiet: Composer width'/)
   assert.match(source, /detail: \(\) => \(readComposerWidthMode\(\) === 'codex' \? 'Codex' : 'Hermes'\)/)
   assert.match(source, /run: \(\) => setComposerWidthMode\(readComposerWidthMode\(\) === 'codex' \? 'hermes' : 'codex'\)/)
 })

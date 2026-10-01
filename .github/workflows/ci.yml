@@ -28,7 +28,7 @@ jobs:
           node-version: 22
 
       - name: Check plugin syntax
-        run: node --check codex-chat-look/plugin.js
+        run: node --check --input-type=module < codex-chat-look/plugin.js
 
       - name: Run regression tests
         # Browser-backed files each launch Chrome; avoid startup contention.

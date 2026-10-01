@@ -1,5 +1,5 @@
-// Bundled into the standalone plugin. The private feed is used only by test builds.
-const UPDATE_REPO = BUILD_ID.includes('-test.') ? 'FPSUnleashed/hermes-codex-skin-dev' : 'FPSUnleashed/hermes-codex-skin'
+// Bundled into Hermes Quiet. Repository ownership is independent; replacement remains opt-in.
+const UPDATE_REPO = 'steveafrost/hermes-quiet'
 const UPDATE_IS_TEST = BUILD_ID.includes('-test.')
 const UPDATE_INTERVAL_MS = 60 * 60 * 1000
 const UPDATE_PENDING_KEY = 'update-pending'
@@ -79,7 +79,7 @@ function updateImageURL(value) {
   try {
     const url = new URL(value)
     if (url.protocol !== 'https:' || url.username || url.password || url.port) return null
-    const path = url.pathname.toLowerCase(), repo = '/fpsunleashed/hermes-codex-skin/'
+    const path = url.pathname.toLowerCase(), repo = `/${UPDATE_REPO.toLowerCase()}/`
     const allowed = (url.hostname === 'github.com' && (path.startsWith(repo + 'releases/download/') || path.startsWith('/user-attachments/assets/')))
       || (url.hostname === 'raw.githubusercontent.com' && path.startsWith(repo))
       || url.hostname === 'user-images.githubusercontent.com'
@@ -292,7 +292,7 @@ function createSkinUpdater(storage, native = globalThis.window?.hermesDesktop, r
       phase('downloading'); state.progress = 0
       const source = await download(asset)
       const identity = updateSourceIdentity(source)
-      if (identity.id !== ID || identity.version !== target.tag_name) throw new Error('The download is not the expected Codex Skin release.')
+      if (identity.id !== ID || identity.version !== target.tag_name) throw new Error('The download is not the expected Hermes Quiet release.')
       state.progress = 1; paint(); await pause(40)
       if (disposed) return
       phase('applying')
@@ -329,7 +329,7 @@ function createSkinUpdater(storage, native = globalThis.window?.hermesDesktop, r
   function mount(anchor) {
     const button = document.createElement('button'), panel = document.createElement('section'), bridge = document.createElement('div')
     button.className = 'codex-update-button'; button.type = 'button'; button.dataset.codexUpdate = 'true'
-    panel.className = 'codex-update-panel'; panel.hidden = true; panel.tabIndex = 0; panel.setAttribute('aria-label', 'Codex Skin releases')
+    panel.className = 'codex-update-panel'; panel.hidden = true; panel.tabIndex = 0; panel.setAttribute('aria-label', 'Hermes Quiet releases')
     bridge.className = 'codex-update-hover-bridge'; bridge.hidden = true; bridge.setAttribute('aria-hidden', 'true')
     anchor.dataset.codexUpdateAnchor = 'true'; anchor.appendChild(button); document.body.append(bridge, panel)
     let closedTimer, previousPhase, previousReleases, previousError, open = false
@@ -364,7 +364,7 @@ function createSkinUpdater(storage, native = globalThis.window?.hermesDesktop, r
     const view = { paint() {
       const visible = state.phase !== 'idle'
       anchor.style.display = visible ? 'inline-flex' : 'none'
-      button.setAttribute('aria-label', state.phase === 'error' ? 'Retry Codex Skin update' : state.phase === 'done' ? 'Codex Skin is up to date' : 'Update Codex Skin')
+      button.setAttribute('aria-label', state.phase === 'error' ? 'Retry Hermes Quiet update' : state.phase === 'done' ? 'Hermes Quiet is up to date' : 'Update Hermes Quiet')
       button.setAttribute('aria-busy', String(['downloading', 'applying', 'awaiting-reload'].includes(state.phase)))
       if (!['available', 'error'].includes(state.phase)) close()
       if (previousPhase !== state.phase) {

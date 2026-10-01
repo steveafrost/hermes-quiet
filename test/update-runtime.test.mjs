@@ -4,7 +4,7 @@ import { createHash, webcrypto } from 'node:crypto'
 import vm from 'node:vm'
 import test from 'node:test'
 const runtime = await readFile(new URL('../src/update-runtime.js', import.meta.url), 'utf8')
-const repo = 'FPSUnleashed/hermes-codex-skin-dev'
+const repo = 'steveafrost/hermes-quiet'
 const root = '/local/desktop-plugins', target = `${root}/codex-chat-look/plugin.js`
 const a = "const ID = 'codex-chat-look'\nconst BUILD_ID = 'v1.8.0-test.1'\n"
 const b = "const ID = 'codex-chat-look'\nconst BUILD_ID = 'v1.8.0-test.2'\n"

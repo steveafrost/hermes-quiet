@@ -11,7 +11,7 @@ async function fixture(){
  plugin.register({storage:{get:(_k,f)=>f,set:()=>{},remove:()=>{}},register:e=>entries.push(e),onDispose:fn=>disposers.push(fn)})
  const element=entries.find(e=>e.id==='update-runtime').render()
  const mount=()=>{effects.length=0;element.type(element.props);const cleanup=effects.map(fn=>fn()).filter(fn=>typeof fn==='function');return()=>cleanup.forEach(fn=>fn())}
- const offer=id=>({checkedAt:Date.now(),releases:[{id,tag_name:'v9.0.'+id,draft:false,prerelease:false,assets:[{id:201,name:'plugin.js',size:100,digest:'sha256:'+'a'.repeat(64),url:'https://api.github.com/repos/FPSUnleashed/hermes-codex-skin/releases/assets/201'}]}]})
+ const offer=id=>({checkedAt:Date.now(),releases:[{id,tag_name:'v9.0.'+id,draft:false,prerelease:false,assets:[{id:201,name:'plugin.js',size:100,digest:'sha256:'+'a'.repeat(64),url:'https://api.github.com/repos/steveafrost/hermes-quiet/releases/assets/201'}]}]})
  return{entries,disposers,updater:element.props.updater,mount,offer}
 }
 

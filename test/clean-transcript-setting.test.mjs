@@ -61,7 +61,7 @@ test('palette setting toggles Clean transcript On and persists it', async () => 
   const command = fixture.registrations.find(item => item.id === 'toggle-clean-transcript')
 
   assert.ok(command)
-  assert.equal(command.data.label, 'Codex Skin: Clean transcript')
+  assert.equal(command.data.label, 'Hermes Quiet: Clean transcript')
   assert.equal(command.data.detail(), 'Off')
 
   command.data.run()

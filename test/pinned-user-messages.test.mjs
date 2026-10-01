@@ -56,7 +56,7 @@ test('palette setting toggles Off and persists it across a plugin reload', async
   const command = fixture.registrations.find(item => item.id === 'toggle-pinned-user-messages')
 
   assert.ok(command)
-  assert.equal(command.data.label, 'Codex Skin: Pinned user messages')
+  assert.equal(command.data.label, 'Hermes Quiet: Pinned user messages')
   assert.equal(command.data.detail(), 'Hermes')
 
   command.data.run()

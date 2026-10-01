@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.9.7] - 2026-10-01
+
+- Establish Hermes Quiet as an independent steveafrost/hermes-quiet codebase.
+- Rebrand visible plugin/theme labels and commands, documentation and ownership.
+- Preserve original MIT attribution/history and legacy IDs/preferences.
+- Point the dormant release helper at our repository; keep replacement disabled.
+- Retain the complete approved Catppuccin, compact-sidebar and fleet experience.
+
 All notable changes to this project are documented here.
 
 ## [1.9.6-local] - 2026-10-01

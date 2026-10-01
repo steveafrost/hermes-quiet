@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises'
 import test from 'node:test'
 import { chromium } from './helpers/chromium.mjs'
 
-const image = 'https://github.com/FPSUnleashed/hermes-codex-skin/releases/download/v1.8.0/composer-update.png'
+const image = 'https://github.com/steveafrost/hermes-quiet/releases/download/v1.8.0/composer-update.png'
 const source = () => readFile(new URL('../codex-chat-look/plugin.js', import.meta.url), 'utf8').then(s => s.replace(/^import .*$/gm, '').replace(/export default\s*\{/, 'globalThis.plugin = {'))
 
 test('release images render safely from Markdown and HTML without loading before hover', async () => {
@@ -18,7 +18,7 @@ test('release images render safely from Markdown and HTML without loading before
   assert.deepEqual(r.images.map(i=>i.alt),['Markdown screenshot','HTML & screenshot','Inline'])
   for(const i of r.images){assert.equal(i.src,null);assert.equal(i.pending,image);assert.equal(i.events,null);assert.equal(i.srcset,null);assert.equal(i.referrer,'no-referrer');assert.equal(i.crossOrigin,null,'GitHub release redirects do not support CORS image mode')}
   assert.equal(r.scripts,0);assert.equal(r.attacked,false);assert.match(r.text,/Before/);assert.match(r.text,/after/);assert.match(r.text,/Blocked image/);assert.doesNotMatch(r.text,/<img/)
-  const urls=[image,'https://github.com/user-attachments/assets/1234','https://raw.githubusercontent.com/FPSUnleashed/hermes-codex-skin/main/image.png','http://github.com/FPSUnleashed/hermes-codex-skin/a.png','https://github.com.evil.invalid/a.png','https://github.com@evil.invalid/a.png','https://github.com/unrelated/repo/releases/download/v1/a.png','javascript:alert(1)','data:image/svg+xml,<svg/>','file:///tmp/a.png','https://github.com:444/FPSUnleashed/hermes-codex-skin/releases/download/v1/a.png']
+  const urls=[image,'https://github.com/user-attachments/assets/1234','https://raw.githubusercontent.com/steveafrost/hermes-quiet/main/image.png','http://github.com/steveafrost/hermes-quiet/a.png','https://github.com.evil.invalid/a.png','https://github.com@evil.invalid/a.png','https://github.com/unrelated/repo/releases/download/v1/a.png','javascript:alert(1)','data:image/svg+xml,<svg/>','file:///tmp/a.png','https://github.com:444/steveafrost/hermes-quiet/releases/download/v1/a.png']
   const allowed=await b.evaluate(`${JSON.stringify(urls)}.map(u=>!!updateImageURL(u))`)
   assert.deepEqual(allowed,[true,true,true,false,false,false,false,false,false,false,false])
   await b.evaluate(`activateUpdateImages(document.querySelector('article'));window.requestedImages=Array.from(document.querySelectorAll('img'),i=>i.src);document.querySelectorAll('img').forEach(i=>i.dispatchEvent(new Event('error')))`)

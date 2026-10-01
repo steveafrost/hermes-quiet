@@ -59,7 +59,7 @@ test('palette setting toggles the titlebar icons back to All and persists it', a
   const command = fixture.registrations.find(item => item.id === 'toggle-titlebar-icons')
 
   assert.ok(command)
-  assert.equal(command.data.label, 'Codex Skin: Titlebar icons')
+  assert.equal(command.data.label, 'Hermes Quiet: Titlebar icons')
   assert.equal(command.data.detail(), 'Hidden')
 
   command.data.run()

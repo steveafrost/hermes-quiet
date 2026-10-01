@@ -10,7 +10,7 @@ function hidingRuleFor(labelFragment) {
     .map(match => match[0])
 }
 
-test('Codex Skin leaves Hermes auto-speak and wake-word controls visible in the composer', () => {
+test('Hermes Quiet leaves Hermes auto-speak and wake-word controls visible in the composer', () => {
   for (const label of [
     'Read replies aloud',
     'Stop reading replies',
@@ -22,7 +22,7 @@ test('Codex Skin leaves Hermes auto-speak and wake-word controls visible in the 
   }
 })
 
-test('Codex Skin does not replace the native TTS or ear controls', () => {
+test('Hermes Quiet does not replace the native TTS or ear controls', () => {
   assert.doesNotMatch(source, /data-codex-(?:tts|auto-speak|wake-word|ear)/i)
   assert.doesNotMatch(source, /createElement\(['"]button['"]\)[\s\S]{0,300}(?:Read replies|Wake word)/i)
 })

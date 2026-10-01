@@ -1,13 +1,12 @@
 name: codex-chat-look
-version: "1.9.6"
+version: "1.9.7"
 description: >-
-  A Codex-inspired look for Hermes Desktop, with refined chat, sidebar and
-  browser styling, native theme support, and optional clean transcript and
-  composer settings. Keeps Hermes' native controls and behavior.
-  Local Catppuccin Latte/Mocha palette with peach accents. Compatibility build
-  based on upstream v1.8.2; upstream one-click replacement is disabled to
-  preserve the custom palette and titlebar settings.
-author: FPSUnleashed
+  Hermes Quiet: an independently maintained Catppuccin Latte/Mocha interface
+  with peach accents, compact sidebar, native fleet dropdown and reversible
+  chrome preferences. Preserves legacy plugin identity and saved settings.
+  Derived from FPSUnleashed's MIT-licensed Codex Skin; binary self-replacement
+  is disabled. Source and releases: steveafrost/hermes-quiet.
+author: steveafrost (based on FPSUnleashed)
 kind: standalone
 provides_tools: []
 provides_hooks: []

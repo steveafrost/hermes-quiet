@@ -1,69 +1,32 @@
-# Approved local Catppuccin variant — v1.9.6
+# Hermes Quiet — preservation and recovery
 
-This checkout carries the approved Hermes Desktop customization on branch
-`hermes-compat-update`. The live standalone plugin is installed at
-`~/.hermes/desktop-plugins/codex-chat-look/`, outside the Hermes application/source.
+Canonical repository: `steveafrost/hermes-quiet`, branch `main`.
+Local checkout: `~/Development/hermes-quiet`.
 
-## Included in the plugin
+The complete look, preferences and fleet dropdown live inside the standalone
+plugin at `~/.hermes/desktop-plugins/codex-chat-look/`, not in the application.
+The plugin ID `codex-chat-look`, theme name `codex-chat` and persisted keys remain
+unchanged to preserve the approved configuration after rebranding.
 
-- Catppuccin Latte/Mocha with peach accents; stable theme identity `codex-chat`.
-- Quiet surfaces and typography; configured Hermes font remains authoritative.
-- Compact 28px session rows, right-side semantic indicators, hidden idle dots,
-  hidden duplicate session kebab, keyboard-revealed search, hidden sidebar extras.
-- Reversible persisted sidebar-density, sidebar-extras and titlebar options.
-- SDK-contributed fleet dropdown: Laptop, Mr Chips, Scooter, Media (existing media
-  profile on Mr Chips); canonical connection-qualified routing and status labels.
-- Positioning, theme activation and cleanup are part of plugin lifetime.
+The plugin has no required helper/probe plugins and no package ownership marker.
+Gateway registrations, credentials, theme selection and preferences remain in
+Hermes user data; a plugin archive does not back up or reconstruct that data.
 
-No diagnostic/helper plugin is required. Gateway registrations and credentials
-belong to Hermes, not this plugin or its recovery archive.
+Self-replacement is disabled with
+`createSkinUpdater(ctx.storage, undefined, undefined, false)`. Regression tests
+cover cached offers, zero requests and zero writes. The dormant release helper
+now targets `steveafrost/hermes-quiet`, never the original author's releases.
 
-## Update safety
+For restoration, back up the installed folder, then copy the three files using
+the explicit README destinations. Use Command-K → Reload desktop plugins if
+necessary. Re-enable Hermes Quiet and select its Catppuccin theme only if those
+preferences were reset; never force user appearance choices at every startup.
 
-Normal Hermes application updates do not require reinstalling this standalone
-user plugin. This installation has no `.hermes-package.json` managed-package
-marker. The plugin's upstream self-replacement is disabled explicitly with
-`createSkinUpdater(ctx.storage, undefined, undefined, false)`, including cached
-release offers; `test/local-variant-update.test.mjs` verifies zero network requests
-and zero file writes. Do not reinstall the original upstream plugin over this one.
+Before deployment, run the complete README verification contract and compare
+each installed file with its source counterpart. Preserve the original MIT
+license and history. Future Hermes SDK/DOM changes may require compatibility
+edits; ordinary application replacement and plugin replacement are separate risks.
 
-This protects ownership of the files, not arbitrary future SDK or DOM changes.
-Native-sidebar CSS depends on Hermes markup and can require compatibility edits.
-Theme selection and plugin preferences are stored by Hermes; restoring files does
-not restore a deleted Hermes user-data directory. Keep theme name and plugin ID
-unchanged, and respect user enable/disable and appearance choices.
-
-## Restore the approved files
-
-From this checkout (after backing up any currently installed variant):
-
-```sh
-mkdir -p "$HOME/.hermes/desktop-plugins/codex-chat-look/desktop"
-cp codex-chat-look/plugin.js "$HOME/.hermes/desktop-plugins/codex-chat-look/plugin.js"
-cp codex-chat-look/desktop/plugin.js "$HOME/.hermes/desktop-plugins/codex-chat-look/desktop/plugin.js"
-cp codex-chat-look/plugin.yaml "$HOME/.hermes/desktop-plugins/codex-chat-look/plugin.yaml"
-```
-
-Hermes watches this folder. If necessary use Command-K → Reload desktop plugins.
-Enable Codex Skin in Plugins and select the `codex-chat` theme in Appearance if
-those preferences were reset. The standalone recovery archive contains these
-three files plus this guide and their SHA-256 hashes; it does not contain secrets.
-
-## Carrying compatibility fixes forward
-
-Merge upstream changes into this local branch, retaining the palette, settings,
-fleet contribution and replacement guard. Before installing changed bytes:
-
-```sh
-node scripts/build-updater.mjs
-CHROME_BIN='/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' \
-  node --test --test-concurrency=1 test/*.test.mjs
-node --check --input-type=module < codex-chat-look/plugin.js
-shasum -a 256 -c CHECKSUMS.sha256
-git diff --check
-```
-
-Verify installed/source copies match; inspect actual menu, theme and sidebar
-geometry in the running app after any compatibility change. Keep source, tests,
-generated mirror, metadata and checksum changes together in Git. Public push or
-release publication requires the user's approval.
+The earlier `hermes-codex-skin` checkout, fork and v1.9.6 recovery archive remain
+available as a historical fallback, but new development belongs here. Never
+blindly merge upstream or overwrite this installation with the original plugin.

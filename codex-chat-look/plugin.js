@@ -4,7 +4,7 @@ import { jsx } from 'react/jsx-runtime'
 
 const ID = 'codex-chat-look'
 const STYLE_ID = `${ID}-styles`
-const BUILD_ID = 'v1.9.6'
+const BUILD_ID = 'v1.9.7'
 const STORAGE_PREFIX = `${ID}:turn:`
 const LONG_USER_STATE_SUFFIX = ':long-user-expanded'
 const MAX_PERSISTED_LONG_USER_STATES = 250
@@ -26,7 +26,7 @@ const HERMES_FONT = SYSTEM_FONT
 
 const CODEX_THEME = {
   name: 'codex-chat',
-  label: 'Codex Skin · Catppuccin',
+  label: 'Hermes Quiet · Catppuccin',
   description: 'Codex-inspired layout with the Catppuccin palette — Latte in light, Mocha in dark, peach accent',
   colors: {
     background: '#eff1f5',
@@ -1717,7 +1717,7 @@ html[data-codex-chat-look='true'] [data-slot='composer-surface'] [data-codex-pla
 }
 
 /* Keep the native Attach menu compact and let Radix own its placement against
-   the + trigger. Codex Skin changes only its visual density and chrome. */
+   the + trigger. Hermes Quiet changes only its visual density and chrome. */
 html[data-codex-chat-look='true'] [data-codex-context-menu='true'] {
   width: 240px !important;
   max-width: calc(100vw - 24px) !important;
@@ -1772,7 +1772,7 @@ html[data-codex-chat-look='true'] [data-codex-context-menu='true'] [data-slot='d
 }
 
 /* The slash completion drawer keeps Hermes' native groups, rows, icons and
-   typography. Codex Skin owns only the reference frame and scrollbar paint. */
+   typography. Hermes Quiet owns only the reference frame and scrollbar paint. */
 html[data-codex-chat-look='true'] [data-slot='composer-completion-drawer'] {
   right: 5px !important;
   left: 5px !important;
@@ -2419,7 +2419,7 @@ html[data-codex-chat-look='true'][data-codex-sidebar-extras='hidden'] [data-slot
   display: none !important;
 }
 
-/* Codex Skin: the top bar carries no tools at all. Every native titlebar glyph
+/* Hermes Quiet: the top bar carries no tools at all. Every native titlebar glyph
    — sidebar toggle, layout editor, HUD, pane-flip, right sidebar and settings —
    is hidden; each stays reachable through its ⌘K command and its keybind.
    Scoped to the "hidden" mode of the titlebar-icons option so ⌘K can restore
@@ -4237,7 +4237,7 @@ function CodexProfileHeader() {
 
 export default {
   id: ID,
-  name: 'Codex Skin',
+  name: 'Hermes Quiet',
   register(ctx) {
     pluginStorage = ctx.storage
     const updater = createSkinUpdater(ctx.storage, undefined, undefined, false)
@@ -4263,7 +4263,7 @@ export default {
       area: PALETTE_AREA,
       data: {
         id: 'codex-chat-look.toggle-composer-width',
-        label: 'Codex Skin: Composer width',
+        label: 'Hermes Quiet: Composer width',
         detail: () => (readComposerWidthMode() === 'codex' ? 'Codex' : 'Hermes'),
         detailVariant: 'state',
         keepOpen: true,
@@ -4276,7 +4276,7 @@ export default {
       area: PALETTE_AREA,
       data: {
         id: 'codex-chat-look.toggle-pinned-user-messages',
-        label: 'Codex Skin: Pinned user messages',
+        label: 'Hermes Quiet: Pinned user messages',
         detail: () => (readPinnedUserMessagesMode() === 'hermes' ? 'Hermes' : 'Off'),
         detailVariant: 'state',
         keepOpen: true,
@@ -4289,7 +4289,7 @@ export default {
       area: PALETTE_AREA,
       data: {
         id: 'codex-chat-look.toggle-clean-transcript',
-        label: 'Codex Skin: Clean transcript',
+        label: 'Hermes Quiet: Clean transcript',
         detail: () => (readCleanTranscriptMode() === 'on' ? 'On' : 'Off'),
         detailVariant: 'state',
         keepOpen: true,
@@ -4302,7 +4302,7 @@ export default {
       area: PALETTE_AREA,
       data: {
         id: 'codex-chat-look.toggle-sidebar-density',
-        label: 'Codex Skin: Sidebar density',
+        label: 'Hermes Quiet: Sidebar density',
         detail: () => readSidebarDensityMode() === 'compact' ? 'Compact' : 'Comfortable',
         detailVariant: 'state',
         keepOpen: true,
@@ -4315,7 +4315,7 @@ export default {
       area: PALETTE_AREA,
       data: {
         id: 'codex-chat-look.toggle-sidebar-extras',
-        label: 'Codex Skin: Sidebar extras',
+        label: 'Hermes Quiet: Sidebar extras',
         detail: () => readSidebarExtrasMode() === 'hidden' ? 'Hidden' : 'Visible',
         detailVariant: 'state',
         keepOpen: true,
@@ -4328,7 +4328,7 @@ export default {
       area: PALETTE_AREA,
       data: {
         id: 'codex-chat-look.toggle-titlebar-icons',
-        label: 'Codex Skin: Titlebar icons',
+        label: 'Hermes Quiet: Titlebar icons',
         detail: () => (readTitlebarIconsMode() === 'hidden' ? 'Hidden' : 'All'),
         detailVariant: 'state',
         keepOpen: true,
@@ -4340,8 +4340,8 @@ export default {
 }
 
 // BEGIN GENERATED UPDATE RUNTIME
-// Bundled into the standalone plugin. The private feed is used only by test builds.
-const UPDATE_REPO = BUILD_ID.includes('-test.') ? 'FPSUnleashed/hermes-codex-skin-dev' : 'FPSUnleashed/hermes-codex-skin'
+// Bundled into Hermes Quiet. Repository ownership is independent; replacement remains opt-in.
+const UPDATE_REPO = 'steveafrost/hermes-quiet'
 const UPDATE_IS_TEST = BUILD_ID.includes('-test.')
 const UPDATE_INTERVAL_MS = 60 * 60 * 1000
 const UPDATE_PENDING_KEY = 'update-pending'
@@ -4421,7 +4421,7 @@ function updateImageURL(value) {
   try {
     const url = new URL(value)
     if (url.protocol !== 'https:' || url.username || url.password || url.port) return null
-    const path = url.pathname.toLowerCase(), repo = '/fpsunleashed/hermes-codex-skin/'
+    const path = url.pathname.toLowerCase(), repo = `/${UPDATE_REPO.toLowerCase()}/`
     const allowed = (url.hostname === 'github.com' && (path.startsWith(repo + 'releases/download/') || path.startsWith('/user-attachments/assets/')))
       || (url.hostname === 'raw.githubusercontent.com' && path.startsWith(repo))
       || url.hostname === 'user-images.githubusercontent.com'
@@ -4634,7 +4634,7 @@ function createSkinUpdater(storage, native = globalThis.window?.hermesDesktop, r
       phase('downloading'); state.progress = 0
       const source = await download(asset)
       const identity = updateSourceIdentity(source)
-      if (identity.id !== ID || identity.version !== target.tag_name) throw new Error('The download is not the expected Codex Skin release.')
+      if (identity.id !== ID || identity.version !== target.tag_name) throw new Error('The download is not the expected Hermes Quiet release.')
       state.progress = 1; paint(); await pause(40)
       if (disposed) return
       phase('applying')
@@ -4671,7 +4671,7 @@ function createSkinUpdater(storage, native = globalThis.window?.hermesDesktop, r
   function mount(anchor) {
     const button = document.createElement('button'), panel = document.createElement('section'), bridge = document.createElement('div')
     button.className = 'codex-update-button'; button.type = 'button'; button.dataset.codexUpdate = 'true'
-    panel.className = 'codex-update-panel'; panel.hidden = true; panel.tabIndex = 0; panel.setAttribute('aria-label', 'Codex Skin releases')
+    panel.className = 'codex-update-panel'; panel.hidden = true; panel.tabIndex = 0; panel.setAttribute('aria-label', 'Hermes Quiet releases')
     bridge.className = 'codex-update-hover-bridge'; bridge.hidden = true; bridge.setAttribute('aria-hidden', 'true')
     anchor.dataset.codexUpdateAnchor = 'true'; anchor.appendChild(button); document.body.append(bridge, panel)
     let closedTimer, previousPhase, previousReleases, previousError, open = false
@@ -4706,7 +4706,7 @@ function createSkinUpdater(storage, native = globalThis.window?.hermesDesktop, r
     const view = { paint() {
       const visible = state.phase !== 'idle'
       anchor.style.display = visible ? 'inline-flex' : 'none'
-      button.setAttribute('aria-label', state.phase === 'error' ? 'Retry Codex Skin update' : state.phase === 'done' ? 'Codex Skin is up to date' : 'Update Codex Skin')
+      button.setAttribute('aria-label', state.phase === 'error' ? 'Retry Hermes Quiet update' : state.phase === 'done' ? 'Hermes Quiet is up to date' : 'Update Hermes Quiet')
       button.setAttribute('aria-busy', String(['downloading', 'applying', 'awaiting-reload'].includes(state.phase)))
       if (!['available', 'error'].includes(state.phase)) close()
       if (previousPhase !== state.phase) {

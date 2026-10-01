@@ -16,5 +16,5 @@ test('retirement preserves user controls and generated images', () => {
   assert.match(source, /data-codex-user-expand/)
   assert.match(source, /function hasRenderedImageAttachment\(user\)/)
   assert.match(source, /aui_embedded-images/)
-  assert.match(source, /Codex Skin: Composer width/)
+  assert.match(source, /Hermes Quiet: Composer width/)
 })
