@@ -2,6 +2,24 @@
 
 All notable changes to this project are documented here.
 
+## [1.9.3-local] - 2026-10-01
+
+### Quiet sidebar refinement
+
+- Reduce idle navigation/title emphasis while keeping selected titles prominent and section labels above accessible contrast thresholds.
+- Use regular-weight section headings, consistent 32px minimum navigation/session targets, and more separation between groups. Preserve native controls, colored project identities and every semantic status cue.
+- Remove decorative working/finished-dot glows while retaining their color, visibility and native working arcs.
+- Keep explicit peach keyboard-focus outlines, and verify light/dark/external/glass contrast, wrapped navigation and status states in browser tests.
+
+## [1.9.2-local] - 2026-10-01
+
+### Appearance
+
+- Match the supplied Codex reference: Mocha base (`#1e1e2e`), subtly raised sidebar (`#222231`), and Surface 0 composer/popovers (`#313244`), retaining peach accents and the light palette.
+- Keep a distinct sidebar painter under Hermes' newer glass surface reset without changing the saved glass preference. Avoid additional darkening of the main Mocha field.
+- Target the stable `data-sidebar="menu-button"` hook as well as `data-slot`, since context-menu wrappers now replace the latter and otherwise lose sidebar navigation typography.
+- Add a browser regression for soft surfaces, glass sidebar hierarchy, and the wrapped navigation hook; rebase exact-color image/composer tests to the new palette.
+
 ## [1.9.1-local] - 2026-10-01
 
 ### Compatibility

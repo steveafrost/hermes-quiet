@@ -34,7 +34,8 @@ function decodeSnapshot(output) {
 // Source contract from Codex Desktop app.asar, build installed 2026-08-31:
 // nav = text-base (14px, 21px, 400); thread/project title = text-base +
 // leading-5 (14px, 20px, 400); section title = text-base + font-medium
-// (14px, 21px, 500), with the macOS system font and normal tracking/case.
+// Original sections were 500; the quiet local variant uses 400 with
+// color and spacing carrying the hierarchy. Keep normal tracking/case.
 test('sidebar typography matches the installed Codex hierarchy', async t => {
   const chrome = chromeExecutable()
 
@@ -140,7 +141,7 @@ test('sidebar typography matches the installed Codex hierarchy', async t => {
     assert.deepEqual(result.section, {
       fontFamily: systemFont,
       fontSize: '14px',
-      fontWeight: '500',
+      fontWeight: '400',
       letterSpacing: 'normal',
       lineHeight: '21px',
       textTransform: 'none'

@@ -4,7 +4,7 @@ import { jsx } from 'react/jsx-runtime'
 
 const ID = 'codex-chat-look'
 const STYLE_ID = `${ID}-styles`
-const BUILD_ID = 'v1.9.1'
+const BUILD_ID = 'v1.9.3'
 const STORAGE_PREFIX = `${ID}:turn:`
 const LONG_USER_STATE_SUFFIX = ':long-user-expanded'
 const MAX_PERSISTED_LONG_USER_STATES = 250
@@ -53,13 +53,13 @@ const CODEX_THEME = {
     userBubbleBorder: '#ccd0da'
   },
   darkColors: {
-    background: '#11111b',
+    background: '#1e1e2e',
     foreground: '#cdd6f4',
-    card: '#1e1e2e',
+    card: '#313244',
     cardForeground: '#cdd6f4',
     muted: '#313244',
     mutedForeground: '#a6adc8',
-    popover: '#1e1e2e',
+    popover: '#313244',
     popoverForeground: '#cdd6f4',
     primary: '#fab387',
     primaryForeground: '#11111b',
@@ -73,7 +73,7 @@ const CODEX_THEME = {
     composerRing: '#45475a',
     destructive: '#f38ba8',
     destructiveForeground: '#11111b',
-    sidebarBackground: '#181825',
+    sidebarBackground: '#222231',
     sidebarBorder: '#313244',
     userBubble: '#1e1e2e',
     userBubbleBorder: '#313244'
@@ -124,7 +124,7 @@ html[data-codex-chat-look='true'] {
   --codex-color-border-subtle: var(--ui-stroke-tertiary);
   --codex-color-hover: var(--ui-row-hover-background);
   --codex-color-active: var(--ui-row-active-background);
-  --codex-sidebar-label: color-mix(in srgb, var(--codex-color-text) 90%, var(--codex-color-sidebar));
+  --codex-sidebar-label: color-mix(in srgb, var(--codex-color-text) 78%, var(--codex-color-sidebar));
   --codex-sidebar-muted: color-mix(in srgb, var(--codex-color-text) 65%, var(--codex-color-sidebar));
   --codex-sidebar-hover: color-mix(in srgb, var(--codex-color-text) 4%, transparent);
   --codex-sidebar-active: color-mix(in srgb, var(--codex-color-text) 7%, transparent);
@@ -145,6 +145,9 @@ html[data-codex-chat-look='true'][data-hermes-theme='codex-chat'] {
 
 /* Keep the measured dark palette exact instead of tinting its neutral seeds. */
 html[data-codex-chat-look='true'][data-hermes-theme='codex-chat'][data-hermes-mode='dark'] {
+  /* Match the reference's Mocha base without Hermes' extra chrome darkening. */
+  --ui-bg-chrome: var(--theme-background-seed);
+  --codex-sidebar-muted: color-mix(in srgb, var(--theme-foreground) 62%, var(--ui-sidebar-surface-background));
   --codex-color-text: var(--theme-foreground);
   --codex-color-active: var(--theme-accent-soft);
   --codex-color-border: var(--dt-border);
@@ -783,7 +786,7 @@ html[data-codex-chat-look='true'] [data-slot='sidebar'] [class~='group/section-l
   text-transform: none !important;
 }
 
-html[data-codex-chat-look='true'] [data-slot='sidebar-menu-button'] {
+html[data-codex-chat-look='true'] :is([data-slot='sidebar-menu-button'], [data-sidebar='menu-button']) {
   font-family: var(--dt-font-sans, ${SYSTEM_FONT}) !important;
   font-size: 14px !important;
   line-height: 21px !important;
@@ -801,10 +804,36 @@ html[data-codex-chat-look='true'] [data-slot='sidebar'] span[class*='text-[0.812
   text-transform: none !important;
 }
 
+/* The native glass body is one painter and clears all nested field tokens.
+   Give the sidebar its own solid reference surface without changing glass
+   preference or repeatedly layering translucent fills. The other themes stay native. */
+html[data-codex-chat-look='true'][data-hermes-theme='codex-chat'][data-hermes-mode='dark'] [data-tree-group='grp-sessions'] {
+  --codex-color-sidebar: var(--theme-sidebar-seed);
+}
+
+/* A quieter rail: predictable targets, room between groups, no status glows.
+   Native virtual rows use measureElement, so these actual heights are measured. */
+html[data-codex-chat-look='true'] [data-slot='sidebar'] :is(.row-hover, [data-sidebar='menu-button'], [data-slot='sidebar-menu-button']),
+html[data-codex-chat-look='true'] [data-slot='sidebar'] [class~='group/workspace'] > button:first-child {
+  min-height: 32px !important;
+}
+html[data-codex-chat-look='true'] [data-slot='sidebar'] [class~='group/section-label'] > span:first-child,
+html[data-codex-chat-look='true'] [data-slot='sidebar'] [class~='group/section-label'] > span:first-child > span:last-child {
+  font-weight: 400 !important;
+}
+html[data-codex-chat-look='true'] [data-slot='sidebar'] [class~='group/section'] {
+  padding-top: 12px !important;
+  padding-bottom: 6px !important;
+}
+html[data-codex-chat-look='true'] [data-slot='sidebar'] :is(.row-hover, [data-sidebar='menu-button'], [data-slot='sidebar-menu-button']):focus-visible {
+  outline: 2px solid var(--dt-ring) !important;
+  outline-offset: -2px !important;
+}
+
 /* Names carry the hierarchy; section labels and utility icons stay quieter.
    Never dim a whole row: its native status and project colors must survive. */
 html[data-codex-chat-look='true'] [data-slot='sidebar'] .row-hover span[class*='text-[0.8125rem]'],
-html[data-codex-chat-look='true'] [data-slot='sidebar-menu-button'] {
+html[data-codex-chat-look='true'] :is([data-slot='sidebar-menu-button'], [data-sidebar='menu-button']) {
   color: var(--codex-sidebar-label) !important;
 }
 
@@ -812,7 +841,7 @@ html[data-codex-chat-look='true'] [data-slot='sidebar'] .row-hover:is(:hover, [d
   color: var(--codex-color-text) !important;
 }
 
-html[data-codex-chat-look='true'] [data-slot='sidebar-menu-button'] > :is(svg, .codicon):not([style*='color']) {
+html[data-codex-chat-look='true'] :is([data-slot='sidebar-menu-button'], [data-sidebar='menu-button']) > :is(svg, .codicon):not([style*='color']) {
   color: var(--codex-sidebar-muted) !important;
 }
 
@@ -838,7 +867,7 @@ html[data-codex-chat-look='true'] [data-slot='sidebar'] .row-hover[data-working=
 html[data-codex-chat-look='true'] [data-slot='sidebar'] [data-working='true'] [aria-label='Session running'],
 html[data-codex-chat-look='true'] [data-slot='sidebar'] [data-working='true'] [aria-label='Session en cours'] {
   background: var(--codex-color-primary) !important;
-  box-shadow: 0 0 0.625rem color-mix(in srgb, var(--codex-color-text) 26%, transparent) !important;
+  box-shadow: none !important;
 }
 
 /* A turn that finished in another chat stays a steady green attention cue.
@@ -850,9 +879,7 @@ html[data-codex-chat-look='true'] [data-slot='sidebar'] [role='status'][class~='
   flex: 0 0 8px !important;
   background: var(--codex-color-success) !important;
   opacity: 1 !important;
-  box-shadow:
-    0 0 0 2px color-mix(in srgb, var(--codex-color-success) 14%, transparent),
-    0 0 8px color-mix(in srgb, var(--codex-color-success) 48%, transparent) !important;
+  box-shadow: none !important;
 }
 
 /* Left-edge history index. Native buttons still own message navigation; only

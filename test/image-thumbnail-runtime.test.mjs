@@ -83,7 +83,7 @@ document.title=btoa(JSON.stringify({active,wrapped,glass,light,disabled}));
     assert.equal(a.zoom,1);assert.equal(a.removeClicks,1)
     assert.ok(result.wrapped.last.top>result.wrapped.first.top)
     assert.equal(result.wrapped.last.right,result.wrapped.row.right)
-    assert.deepEqual(a.colors,{chat:'rgb(17, 17, 27)',sidebar:'rgb(24, 24, 37)',selected:'color(srgb 0.803922 0.839216 0.956863 / 0.07)',composer:'rgb(30, 30, 46)',bubble:'rgb(30, 30, 46)',panel:'rgb(30, 30, 46)',text:'rgb(205, 214, 244)'})
+    assert.deepEqual(a.colors,{chat:'rgb(30, 30, 46)',sidebar:'rgb(34, 34, 49)',selected:'color(srgb 0.803922 0.839216 0.956863 / 0.07)',composer:'rgb(49, 50, 68)',bubble:'rgb(30, 30, 46)',panel:'rgb(49, 50, 68)',text:'rgb(205, 214, 244)'})
     assert.equal(result.glass.sidebar,'rgba(0, 0, 0, 0)')
     assert.equal(result.glass.chatToken,'transparent')
     assert.equal(result.light.composer,'rgb(255, 255, 255)')

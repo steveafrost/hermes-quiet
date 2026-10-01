@@ -71,8 +71,8 @@ ${CSS}\n${BROWSER_PALETTE_CSS}
       ctx.fillStyle=getComputedStyle(document.getElementById('editor'),'::before').color;ctx.fillRect(0,0,1,1);return [...ctx.getImageData(0,0,1,1).data];
     })()`)
     // Flatten of the theme's 24%-foreground placeholder over --theme-card-seed.
-    // Catppuccin Mocha: 0.24*#cdd6f4 over 0.76*#1e1e2e.
-    assert.deepEqual(placeholderPixel,[72,74,94,255])
+    // Catppuccin Mocha: 0.24*#cdd6f4 over 0.76*#313244.
+    assert.deepEqual(placeholderPixel,[86,89,110,255])
     if (process.env.CODEX_SKIN_ARTIFACT_DIR) {
       await mkdir(process.env.CODEX_SKIN_ARTIFACT_DIR,{recursive:true})
       const {data}=await call('Page.captureScreenshot',{format:'png'},sessionId)
