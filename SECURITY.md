@@ -12,4 +12,4 @@ Please use GitHub's private vulnerability reporting for this repository when ava
 
 Hermes Desktop loads local plugins into the renderer with full app authority. Plugin loading provides error isolation, not a security sandbox. Review the source and verify the published SHA-256 before installation.
 
-The plugin has no separate Python backend. Its fleet dropdown uses Hermes host APIs to enumerate connections/agents and switch the selected route. Binary self-replacement is disabled; the retained release helper is scoped to steveafrost/hermes-quiet. Gateway credentials and private user data must never be included in reports or plugin packages.
+The plugin has no separate Python backend. Its fleet dropdown uses Hermes host APIs to enumerate connections/agents and switch the selected route. The plugin has no self-updater, release helper, native file bridge or second-stage loader. It uses SDK theme contributions, titlebar slots and host verbs. Gateway credentials and private user data must never be included in reports or plugin packages.

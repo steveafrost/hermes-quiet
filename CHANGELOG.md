@@ -1,3 +1,12 @@
+## 2.0.0 — local catalog candidate
+
+- Replace native DOM/layout runtime with SDK theme and titlebar contributions.
+- Retain fleet routes and host-owned session density through SDK host verbs.
+- Remove updater runtime, source, build path and both composer registrations.
+- Retire unsupported layout commands and their obsolete tests; preserve IDs,
+  theme selection, untouched legacy storage and original attribution.
+- Prepare three upstream SDK hook issue drafts locally.
+
 # Changelog
 
 ## [1.9.7] - 2026-10-01

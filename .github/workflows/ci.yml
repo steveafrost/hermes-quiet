@@ -27,6 +27,9 @@ jobs:
         with:
           node-version: 22
 
+      - name: Build shipped mirror
+        run: node scripts/build.mjs && git diff --exit-code -- codex-chat-look/desktop/plugin.js CHECKSUMS.sha256
+
       - name: Check plugin syntax
         run: node --check --input-type=module < codex-chat-look/plugin.js
 
